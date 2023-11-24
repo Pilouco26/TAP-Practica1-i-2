@@ -22,4 +22,12 @@ public class FooImpl implements Foo {
         int number = a.get("0");
         System.out.println(number+" multplied by 3 is "+number*3);
     }
+
+    public void multiply(Object args, Object arg2){
+        Map<String, Integer> a = (Map<String, Integer>)args;
+        Map<String, Integer> b = (Map<String, Integer>)arg2;
+        int number = a.get("0");
+        int number2 = a.get("0");
+        System.out.println(number+" multplied by 3 is "+number*number2);
+    }
 }

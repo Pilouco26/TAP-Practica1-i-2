@@ -9,5 +9,6 @@ public interface Foo {
     void doSomething(Object args);
     void doAnother(Object args);
 
+    void multiply(Object args, Object args2);
     void multiplyByThree(Object args);
 }

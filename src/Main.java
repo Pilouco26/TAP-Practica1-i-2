@@ -10,6 +10,7 @@ public class Main {
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
         aFoo.doSomething( 5);
         aFoo.doAnother(0);
-        aFoo.multiplyByThree(6);
+        aFoo.multiply(6, 5);
+
     }
 }

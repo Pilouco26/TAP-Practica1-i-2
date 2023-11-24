@@ -37,10 +37,10 @@ public class ActionProxy implements InvocationHandler {
         try {
             String invokerName = method.getName();
             Map<String, Integer> arg = toMap(args);
-            if (args == null || args.length == 0) {
-                controller.invoke(invokerName, arg);
+            if (args.length == 1) {
+                controller.invokeAsync(invokerName, arg, 3000);
             } else {
-                controller.invoke(invokerName, arg);
+                System.out.println(controller.invoke(invokerName, arg));
             }
         } catch (Throwable e) {
             System.out.println("Error: " + e);

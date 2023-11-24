@@ -10,10 +10,10 @@ import java.util.function.Function;
 public class Controller {
     public Map<String, Function<Map<String, Integer>, Integer>> actionsRegistered= new HashMap<>();
     public Map<String, Invoker> invokerMap;
-    InvokerThreads primerInvoker;
+    InvokerThreads invoker;
     public Controller(){
 
-        primerInvoker = new InvokerThreads();
+        invoker = new InvokerThreads(10);
     }
 
 
@@ -24,6 +24,12 @@ public class Controller {
     public Object invoke(String invokerName, Map<String, Integer> values) {
         Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
 
-    return  primerInvoker.execute(action, values);
+    return  invoker.execute(action, values);
+    }
+
+    public Object invokeAsync(String invokerName, Map<String, Integer> values, int sleep) throws InterruptedException {
+        Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
+
+        return  invoker.executeAsync(action, values, sleep);
     }
 }
