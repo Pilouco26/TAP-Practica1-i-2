@@ -7,13 +7,15 @@ import java.util.Map;
  */
 public class FooImpl implements Foo {
     @Override
-    public void doSomething(Object args){
+    public int doSomething(Object args){
         System.out.println("I am doing something ....");
+        return 0;
     }
 
     @Override
-    public void doAnother(Object args) {
+    public int doAnother(Object args) {
         System.out.println("I am doing another thing");
+        return 0;
     }
 
     @Override
@@ -23,11 +25,10 @@ public class FooImpl implements Foo {
         System.out.println(number+" multplied by 3 is "+number*3);
     }
 
-    public void multiply(Object args, Object arg2){
-        Map<String, Integer> a = (Map<String, Integer>)args;
-        Map<String, Integer> b = (Map<String, Integer>)arg2;
-        int number = a.get("0");
-        int number2 = a.get("0");
+    public void multiply(Object[] numbers){
+
+        int number = (int)numbers[0];
+        int number2 = (int)numbers[1];
         System.out.println(number+" multplied by 3 is "+number*number2);
     }
 }

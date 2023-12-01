@@ -2,6 +2,8 @@ import ActionProxy.ActionProxy;
 import ActionProxy.FooImpl;
 import ActionProxy.Foo;
 import Controller.Controller;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
@@ -10,7 +12,6 @@ public class Main {
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
         aFoo.doSomething( 5);
         aFoo.doAnother(0);
-        aFoo.multiply(6, 5);
 
     }
 }

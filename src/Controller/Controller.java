@@ -2,6 +2,7 @@ package Controller;
 
 import Invoker.InvokerThreads;
 import Invoker.Invoker;
+import Invoker.InvokerMetrics;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.function.Function;
 public class Controller {
     public Map<String, Function<Map<String, Integer>, Integer>> actionsRegistered= new HashMap<>();
     public Map<String, Invoker> invokerMap;
+
+    public InvokerMetrics invokerMetrics;
     InvokerThreads invoker;
     public Controller(){
 

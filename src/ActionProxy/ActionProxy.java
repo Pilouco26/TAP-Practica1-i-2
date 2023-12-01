@@ -52,7 +52,14 @@ public class ActionProxy implements InvocationHandler {
     public static Map<String, Integer> toMap(Object[] objects) {
         if(objects!=null){ Map<String, Integer> map = new HashMap<>();
             for (int i = 0; i < objects.length; i++) {
-                map.put(Integer.toString(i), (Integer) objects[i]);
+                if(objects[i] instanceof Object[]){
+                    Object[] a = (Object[]) objects[i];
+                    for(int j=0; j<a.length; j++){
+                        map.put(Integer.toString(j), (Integer)a[j]);
+                    }
+                }
+                else{                map.put(Integer.toString(i), (Integer) objects[i]);}
+
             }
             return map;}
        return null;
