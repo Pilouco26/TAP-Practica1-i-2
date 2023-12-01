@@ -1,17 +1,23 @@
 package Invoker;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class InvokerMetrics {
+public class Observer {
 
     private Map<String, String> assignedInvokers;
+
+    private String invokerName;
     private Map<String, Long> assignedMemory;
     private Map<String, Long> actionsTime;
 
-    public InvokerMetrics(Map<String, String> assignedInvokers, Map<String, Long> assignedMemory, Map<String, Long> actionsTime) {
-        this.assignedInvokers = assignedInvokers;
-        this.assignedMemory = assignedMemory;
-        this.actionsTime = actionsTime;
+
+
+    public Observer(String invokerName) {
+        this.assignedMemory = new HashMap<>();
+        this.actionsTime = new HashMap<>();
+        this.invokerName = invokerName;
+
     }
 
     public Map<String, String> getAssignedInvokers() {
@@ -25,6 +31,7 @@ public class InvokerMetrics {
     public Map<String, Long> getAssignedMemory() {
         return assignedMemory;
     }
+
 
     public void setAssignedMemory(Map<String, Long> assignedMemory) {
         this.assignedMemory = assignedMemory;
@@ -45,4 +52,29 @@ public class InvokerMetrics {
         }
         return totalTime / actionsTime.size();
     }
+
+    public Double calculateMaxActionTime() {
+        double maxTime = 0.0;
+        for (Map.Entry<String, Long> entry : actionsTime.entrySet()) {
+            double currentTime = entry.getValue();
+            if (currentTime > maxTime) {
+                maxTime = currentTime;
+            }
+        }
+        return maxTime;
+    }
+
+
+    public void putInvokerPair(String key, String value) {
+        assignedInvokers.put(key, value);
+    }
+
+    public void putMemoryPair(String invokerName, Long value) {
+        assignedMemory.put(invokerName, value);
+    }
+
+    public void putActionTimePair(String invokerName, Long value) {
+        actionsTime.put(invokerName, value);
+    }
+
 }

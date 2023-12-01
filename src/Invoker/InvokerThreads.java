@@ -14,12 +14,16 @@ public class InvokerThreads implements Invoker{
         executor = Executors.newFixedThreadPool(numThreads);
     }
     @Override
-    public Object execute(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values) {
+    public Object execute(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, Observer observer) {
         long start = System.nanoTime();
+        Runtime runtime = Runtime.getRuntime();
+        long beforeMemory = runtime.totalMemory();
         Object returns = action.apply(values);
+        long afterMemory = runtime.totalMemory();
+        long memoryUsed = afterMemory - beforeMemory;
         long end = System.nanoTime();
-        long totalTime = end -start;
-        System.out.println("Aquest el temps total: "+totalTime);
+        long totalTime = end - start;
+        observer.putActionTimePair(observer.getActionsTime().size()+"", totalTime);
         return returns;
     }
 
