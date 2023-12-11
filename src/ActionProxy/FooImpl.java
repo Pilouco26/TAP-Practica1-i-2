@@ -8,13 +8,13 @@ import java.util.Map;
 public class FooImpl implements Foo {
     @Override
     public int doSomething(Object args){
-        System.out.println("I am doing something ....");
+        System.out.println("");
         return 0;
     }
 
     @Override
     public int doAnother(Object args) {
-        System.out.println("I am doing another thing");
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaa");
         return 0;
     }
 
@@ -22,7 +22,6 @@ public class FooImpl implements Foo {
     public void multiplyByThree(Object args){
         Map<String, Integer> a = (Map<String, Integer>)args;
         int number = a.get("0");
-        System.out.println(number+" multplied by 3 is "+number*3);
     }
 
     public void multiply(Object[] numbers){

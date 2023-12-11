@@ -3,6 +3,7 @@ package Invoker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.*;
 import java.util.function.Function;
 
@@ -10,20 +11,37 @@ public class InvokerThreads implements Invoker{
     List<Callable<String>> callableTasks = new ArrayList<>();
     ExecutorService executor;
 
+    final int maxMemory = 100;
+
+    int memoryGettingUsed = 0;
+    int memoryUsedTotal = 0;
+
+    public int getMemoryUsedTotal(){
+        return  memoryUsedTotal;
+    }
+
+    public int getMemoryGettingUsed(){
+        return  memoryGettingUsed;
+    }
+
     public InvokerThreads(int numThreads){
         executor = Executors.newFixedThreadPool(numThreads);
     }
     @Override
     public Object execute(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, Observer observer) {
         long start = System.nanoTime();
-        Runtime runtime = Runtime.getRuntime();
-        long beforeMemory = runtime.totalMemory();
         Object returns = action.apply(values);
-        long afterMemory = runtime.totalMemory();
-        long memoryUsed = afterMemory - beforeMemory;
+        Random r= new Random();
+        int memoryUsed = r.nextInt(500);
+        memoryUsedTotal +=memoryUsed;
+        observer.putMemoryPairInvoker(this, memoryUsed);
+        memoryGettingUsed +=memoryUsed;
+        System.out.println(memoryGettingUsed);
         long end = System.nanoTime();
         long totalTime = end - start;
-        observer.putActionTimePair(observer.getActionsTime().size()+"", totalTime);
+        memoryGettingUsed-=memoryUsed;
+        observer.putActionTimePair(action+"", totalTime);
+        observer.putMemoryPair(action+"", memoryUsed);
         return returns;
     }
 
