@@ -17,6 +17,17 @@ public class FooImpl implements Foo {
         System.out.println("cooking");
         return 0;
     }
+    @Override
+    public int bored(Object args) {
+        int result=0;
+
+        Map<String, Integer> values = (Map<String, Integer>) args;
+        int boredNumber = values.get("0");
+        System.out.println("boredNumber:"+boredNumber);
+
+        return result;
+    }
+
 
     @Override
     public void multiplyByThree(Object args){

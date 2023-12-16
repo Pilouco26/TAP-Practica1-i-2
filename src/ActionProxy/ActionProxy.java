@@ -35,13 +35,24 @@ public class ActionProxy implements InvocationHandler {
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+        Future<Object> resultAsync;
         try {
+
             String invokerName = method.getName();
             Map<String, Integer> arg = toMap(args);
             if (args.length == 1) {
-                controller.invokeAsync(invokerName, arg, 0);
+                resultAsync = controller.invokeAsync(invokerName, arg, 0);
+                if(resultAsync.isDone()) return (int)resultAsync.get();
+                else{
+                    while (!resultAsync.isDone()) {
+                        Thread.yield();
+                    }
+                    return resultAsync.get();
+                }
             } else {
-                controller.invoke(invokerName, arg);
+                Object result = controller.invoke(invokerName, arg);
+                return result;
             }
         } catch (Throwable e) {
             System.out.println("Error: " + e);

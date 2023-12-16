@@ -16,10 +16,10 @@ public class Controller {
     private Map<String,Observer> observers = new HashMap<String, Observer>();
     int invokersElements;
     List<InvokerThreads> invokers = new ArrayList<InvokerThreads>();
-    public Controller(int invokersElements){
+    public Controller(int invokersElements, int threadingLevel){
         this.invokersElements = invokersElements;
         for(int i=0; i<invokersElements; i++) {
-            invokers.add(new InvokerThreads(4));
+            invokers.add(new InvokerThreads(threadingLevel));
         }
 
     }

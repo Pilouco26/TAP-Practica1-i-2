@@ -36,7 +36,6 @@ public class InvokerThreads implements Invoker{
         memoryUsedTotal +=memoryUsed;
         observer.putMemoryPairInvoker(this, memoryUsed);
         memoryGettingUsed +=memoryUsed;
-        System.out.println(memoryGettingUsed);
         long end = System.nanoTime();
         long totalTime = end - start;
         memoryGettingUsed-=memoryUsed;
