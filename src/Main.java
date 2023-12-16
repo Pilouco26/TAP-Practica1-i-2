@@ -10,21 +10,17 @@ public class Main {
     public static void main(String[] args) {
         Controller controller = new Controller(10);
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
-        for(int i=0; i<1000000; i++){
-
-            aFoo.multiplyByThree( 5);
+        long start = System.currentTimeMillis();
+        System.out.println("comença aqui tot");
+        for(int i=0; i<100; i++) {
             aFoo.doSomething(5);
             aFoo.doAnother(5);
         }
 
+        long end = System.currentTimeMillis();
 
-    controller.getAllTime();
-    controller.getMax();
-    controller.getMin();
-    controller.getMemory();
-        System.out.println("--------------------------------------------------------------------------\n\n");
-    controller.getMemoryForEachInvoker();
-    controller.getMemoryGettingUsedForEachInvoker();
+        System.out.println("Time taken to run the loop: " + (end - start) + "ms");
+
 
 
     }

@@ -9,13 +9,15 @@ import java.util.function.Function;
 
 public class InvokerThreads implements Invoker{
     List<Callable<String>> callableTasks = new ArrayList<>();
-    ExecutorService executor;
+    private ExecutorService executor ;
 
     final int maxMemory = 100;
 
     int memoryGettingUsed = 0;
     int memoryUsedTotal = 0;
-
+    public InvokerThreads(int numThreads){
+        executor = Executors.newFixedThreadPool(numThreads);
+    }
     public int getMemoryUsedTotal(){
         return  memoryUsedTotal;
     }
@@ -24,9 +26,7 @@ public class InvokerThreads implements Invoker{
         return  memoryGettingUsed;
     }
 
-    public InvokerThreads(int numThreads){
-        executor = Executors.newFixedThreadPool(numThreads);
-    }
+
     @Override
     public Object execute(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, Observer observer) {
         long start = System.nanoTime();
@@ -52,21 +52,16 @@ public class InvokerThreads implements Invoker{
     public void executeAllCallableTask() throws InterruptedException {
         executor.invokeAll(callableTasks);
     }
-    public Future<String> executeAsync(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, int sleep) throws InterruptedException {
-        Callable<String> callableTask = () -> {
-            TimeUnit.MILLISECONDS.sleep(sleep);
-            long start = System.nanoTime();
-            System.out.println("Inici"+start);
-            int result = action.apply(values);
-            long end = System.nanoTime();
-            System.out.println("Final"+end);
-            long totalTime = end - start;
-            System.out.println("Aquest el temps total: "+totalTime);
-            return String.valueOf(result);
-        };
-        return submitTask(callableTask);
+    public Future<Object> executeAsync(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, int sleep) throws InterruptedException, ExecutionException {
 
+        return executor.submit(() -> {
+            // Perform some computation
+            return action.apply(values);
+        });
 
     }
+
+
+
 
 }

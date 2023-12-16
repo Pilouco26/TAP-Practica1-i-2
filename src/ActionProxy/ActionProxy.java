@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import Controller.Controller;
@@ -37,8 +38,8 @@ public class ActionProxy implements InvocationHandler {
         try {
             String invokerName = method.getName();
             Map<String, Integer> arg = toMap(args);
-            if (args.length == 2) {
-                controller.invokeAsync(invokerName, arg, 3000);
+            if (args.length == 1) {
+                controller.invokeAsync(invokerName, arg, 0);
             } else {
                 controller.invoke(invokerName, arg);
             }

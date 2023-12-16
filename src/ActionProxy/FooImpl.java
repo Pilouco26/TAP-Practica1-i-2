@@ -8,13 +8,13 @@ import java.util.Map;
 public class FooImpl implements Foo {
     @Override
     public int doSomething(Object args){
-        System.out.println("");
+        System.out.println("cooking2");
         return 0;
     }
 
     @Override
     public int doAnother(Object args) {
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaa");
+        System.out.println("cooking");
         return 0;
     }
 

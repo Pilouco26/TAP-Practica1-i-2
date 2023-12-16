@@ -5,6 +5,8 @@ import Invoker.Invoker;
 import Invoker.Observer;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class Controller {
@@ -12,12 +14,12 @@ public class Controller {
     public Map<String, Invoker> invokerMap;
 
     private Map<String,Observer> observers = new HashMap<String, Observer>();
-    int numThreads;
+    int invokersElements;
     List<InvokerThreads> invokers = new ArrayList<InvokerThreads>();
-    public Controller(int numThreads){
-        this.numThreads = numThreads;
-        for(int i=0; i<numThreads; i++) {
-            invokers.add(new InvokerThreads(10));
+    public Controller(int invokersElements){
+        this.invokersElements = invokersElements;
+        for(int i=0; i<invokersElements; i++) {
+            invokers.add(new InvokerThreads(4));
         }
 
     }
@@ -35,13 +37,18 @@ public class Controller {
             observers.put(invokerName, observer);
         }
 
-    return  invokers.get(new Random().nextInt(numThreads)).execute(action, values, observer);
+    return  invokers.get(new Random().nextInt(invokersElements)).execute(action, values, observer);
     }
 
-    public Object invokeAsync(String invokerName, Map<String, Integer> values, int sleep) throws InterruptedException {
+    public Future<Object> invokeAsync(String invokerName, Map<String, Integer> values, int sleep) throws InterruptedException, ExecutionException {
         Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
-
-        return  invokers.get(new Random().nextInt(numThreads)).executeAsync(action, values, sleep);
+        Observer observer = observers.get(invokerName);
+        if(observer==null){
+            observer = new Observer(invokerName);
+            observers.put(invokerName, observer);
+        }
+        Future<Object> future =  invokers.get(new Random().nextInt(invokersElements)).executeAsync(action, values, sleep);
+        return future;
     }
 
     public void getAllTime(){
