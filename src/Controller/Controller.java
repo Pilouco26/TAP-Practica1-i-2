@@ -3,6 +3,8 @@ package Controller;
 import Invoker.InvokerThreads;
 import Invoker.Invoker;
 import Invoker.Observer;
+import PolicyManager.PolicyManager;
+import WrappedReturn.WrappedReturn;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -12,11 +14,14 @@ import java.util.function.Function;
 public class Controller {
     public Map<String, Function<Map<String, Integer>, Integer>> actionsRegistered= new HashMap<>();
     public Map<String, Invoker> invokerMap;
+    public int lastOne;
+    public PolicyManager policyManager;
 
-    private Map<String,Observer> observers = new HashMap<String, Observer>();
+    public Map<String,Observer> observers = new HashMap<String, Observer>();
     int invokersElements;
     List<InvokerThreads> invokers = new ArrayList<InvokerThreads>();
-    public Controller(int invokersElements, int threadingLevel){
+    public Controller(int invokersElements, int threadingLevel, PolicyManager policyManager){
+        this.policyManager = policyManager;
         this.invokersElements = invokersElements;
         for(int i=0; i<invokersElements; i++) {
             invokers.add(new InvokerThreads(threadingLevel));
@@ -24,7 +29,9 @@ public class Controller {
 
     }
 
-
+    public List<InvokerThreads> getInvokers(){
+        return this.invokers;
+    }
     public void registerAction(String invokerName, Function<Map<String, Integer>, Integer> action) {
         actionsRegistered.put(invokerName, action);
     }
@@ -37,18 +44,20 @@ public class Controller {
             observers.put(invokerName, observer);
         }
 
-    return  invokers.get(new Random().nextInt(invokersElements)).execute(action, values, observer);
+    return  invokers.get(policyManager.selectInvoker(invokersElements, invokers)).execute(action, values, observer);
     }
 
-    public Future<Object> invokeAsync(String invokerName, Map<String, Integer> values, int sleep) throws InterruptedException, ExecutionException {
+    public WrappedReturn invokeAsync(String invokerName, Map<String, Integer> values, int sleep) throws InterruptedException, ExecutionException {
         Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
         Observer observer = observers.get(invokerName);
         if(observer==null){
             observer = new Observer(invokerName);
             observers.put(invokerName, observer);
         }
-        Future<Object> future =  invokers.get(new Random().nextInt(invokersElements)).executeAsync(action, values, sleep);
-        return future;
+        lastOne =  policyManager.selectInvoker(invokersElements, invokers);
+        WrappedReturn result = invokers.get(lastOne).executeAsync(action, values, sleep, observer);
+
+       return result;
     }
 
     public void getAllTime(){

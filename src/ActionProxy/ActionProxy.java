@@ -4,18 +4,23 @@ import javax.swing.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import Controller.Controller;
+import Invoker.InvokerThreads;
+import WrappedReturn.WrappedReturn;
 
 public class ActionProxy implements InvocationHandler {
-
+    private final ReentrantLock lock = new ReentrantLock();
     private Controller controller;
     private Object target;
-
+    public List<WrappedReturn> wrappeds = new ArrayList<>();
     public ActionProxy(Controller controller, Object target) {
         this.controller = controller;
         this.target = target;
@@ -35,25 +40,30 @@ public class ActionProxy implements InvocationHandler {
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
-        Future<Object> resultAsync;
         try {
 
             String invokerName = method.getName();
             Map<String, Integer> arg = toMap(args);
-            if (args.length == 1) {
-                resultAsync = controller.invokeAsync(invokerName, arg, 0);
-                if(resultAsync.isDone()) return (int)resultAsync.get();
-                else{
-                    while (!resultAsync.isDone()) {
-                        Thread.yield();
-                    }
-                    return resultAsync.get();
+
+            for(int i=0; i<wrappeds.size(); i++){
+
+                WrappedReturn wrapped =  wrappeds.get(i);
+                if(wrapped.future.isDone()){
+
+                    wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
+                    wrappeds.remove(i);
+                    System.out.println("deal its done");
                 }
-            } else {
-                Object result = controller.invoke(invokerName, arg);
-                return result;
             }
+
+
+            WrappedReturn  wrappedReturn =controller.invokeAsync(invokerName, arg, 0);
+            if(!wrappeds.contains(wrappedReturn)){
+                wrappeds.add(wrappedReturn);
+            }
+
+
+
         } catch (Throwable e) {
             System.out.println("Error: " + e);
         }

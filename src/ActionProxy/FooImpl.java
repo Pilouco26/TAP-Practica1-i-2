@@ -23,7 +23,7 @@ public class FooImpl implements Foo {
 
         Map<String, Integer> values = (Map<String, Integer>) args;
         int boredNumber = values.get("0");
-        System.out.println("boredNumber:"+boredNumber);
+
 
         return result;
     }

@@ -1,8 +1,15 @@
 package PolicyManager;
 
+import Controller.Controller;
+import Invoker.InvokerThreads;
+
+import java.util.List;
+
 /**
  * Created by pedro on 9/10/15.
  */
 public interface PolicyManager {
-    int doOperation(int num1, int num2);
+
+
+    int selectInvoker(int size, List<InvokerThreads> invokers);
 }

@@ -1,8 +1,13 @@
 package PolicyManager;
 
+import Controller.Controller;
+import Invoker.InvokerThreads;
+
+import java.util.List;
+
 public class GreddyGroup implements PolicyManager{
     @Override
-    public int doOperation(int num1, int num2) {
+    public int selectInvoker(int size, List<InvokerThreads> invokers) {
         return 0;
     }
 }
