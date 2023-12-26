@@ -18,11 +18,11 @@ public class FooImpl implements Foo {
         return 0;
     }
     @Override
-    public int bored(Object args) {
+    public int bored(Object args) throws InterruptedException {
         int result=0;
 
-        Map<String, Integer> values = (Map<String, Integer>) args;
-        int boredNumber = values.get("0");
+        Thread.sleep(2000);
+        System.out.println("im bored");
 
 
         return result;

@@ -2,6 +2,7 @@ package PolicyManager;
 
 import Controller.Controller;
 import Invoker.InvokerThreads;
+import WrappedReturn.WrappedReturn;
 
 import java.util.List;
 
@@ -11,5 +12,5 @@ import java.util.List;
 public interface PolicyManager {
 
 
-    int selectInvoker(int size, List<InvokerThreads> invokers);
+    int selectInvoker(int size, List<InvokerThreads> invokers,List<WrappedReturn> listWrapped);
 }

@@ -32,30 +32,18 @@ public class Controller {
     public List<InvokerThreads> getInvokers(){
         return this.invokers;
     }
-    public void registerAction(String invokerName, Function<Map<String, Integer>, Integer> action) {
+    public void registerAction(String invokerName, Function<Map<String, Integer>, Integer> action, int memoryUsage) {
         actionsRegistered.put(invokerName, action);
     }
-
-    public Object invoke(String invokerName, Map<String, Integer> values) {
+    public WrappedReturn invokeAsync(String invokerName, Map<String, Integer> values, List<WrappedReturn> listWrapped, int memoryUsage) throws InterruptedException, ExecutionException {
         Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
         Observer observer = observers.get(invokerName);
         if(observer==null){
             observer = new Observer(invokerName);
             observers.put(invokerName, observer);
         }
-
-    return  invokers.get(policyManager.selectInvoker(invokersElements, invokers)).execute(action, values, observer);
-    }
-
-    public WrappedReturn invokeAsync(String invokerName, Map<String, Integer> values, int sleep) throws InterruptedException, ExecutionException {
-        Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
-        Observer observer = observers.get(invokerName);
-        if(observer==null){
-            observer = new Observer(invokerName);
-            observers.put(invokerName, observer);
-        }
-        lastOne =  policyManager.selectInvoker(invokersElements, invokers);
-        WrappedReturn result = invokers.get(lastOne).executeAsync(action, values, sleep, observer);
+        lastOne =  policyManager.selectInvoker(invokersElements, invokers, listWrapped);
+        WrappedReturn result = invokers.get(lastOne).executeAsync(action, values, memoryUsage, observer);
 
        return result;
     }

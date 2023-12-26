@@ -2,15 +2,16 @@ package PolicyManager;
 
 import Controller.Controller;
 import Invoker.InvokerThreads;
+import WrappedReturn.WrappedReturn;
 
 import java.util.List;
-import java.util.Random;
+
 
 public class RoundRobin implements PolicyManager{
     int lastOne=-1;
 
     @Override
-    public int selectInvoker(int size,  List<InvokerThreads> invokers) {
+    public int selectInvoker(int size, List<InvokerThreads> invokers,List<WrappedReturn> listWrapped) {
         lastOne+=1;
         lastOne = lastOne % size;
         System.out.println("invoker "+lastOne+" gets selected");
@@ -19,8 +20,20 @@ public class RoundRobin implements PolicyManager{
             lastOne+=1;
             lastOne = lastOne % size;
             invokerThreads= invokers.get(lastOne);
+            treatFutures(listWrapped);
         }
         System.out.println("\nMemory getting used: "+ invokerThreads.getMemoryGettingUsed());
         return lastOne;
+    }
+
+    public void treatFutures(List<WrappedReturn> listWrapped){
+        for(int i=0; i<listWrapped.size(); i++){
+
+            WrappedReturn wrapped =  listWrapped.get(i);
+            if(wrapped.future.isDone()){
+                wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
+                listWrapped.remove(i);
+            }
+        }
     }
 }

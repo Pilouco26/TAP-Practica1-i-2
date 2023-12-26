@@ -33,7 +33,7 @@ public class ActionProxy implements InvocationHandler {
 
         for(int i=0; i<methods.length; i++){
             Function<Map<String, Integer>, Integer> adaptedMethod = MethodToFunctionAdapter.adaptMethod(methods[i], targetClass);
-            controller.registerAction(methods[i].getName(), adaptedMethod);
+            controller.registerAction(methods[i].getName(), adaptedMethod, 10);
         }
         return Proxy. newProxyInstance(targetClass.getClassLoader(),
                 interfaces, new ActionProxy(controller, target));
@@ -45,19 +45,10 @@ public class ActionProxy implements InvocationHandler {
             String invokerName = method.getName();
             Map<String, Integer> arg = toMap(args);
 
-            for(int i=0; i<wrappeds.size(); i++){
-
-                WrappedReturn wrapped =  wrappeds.get(i);
-                if(wrapped.future.isDone()){
-
-                    wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
-                    wrappeds.remove(i);
-                    System.out.println("deal its done");
-                }
-            }
+            treatFutures(wrappeds);
 
 
-            WrappedReturn  wrappedReturn =controller.invokeAsync(invokerName, arg, 0);
+            WrappedReturn  wrappedReturn =controller.invokeAsync(invokerName, arg, wrappeds, 10);
             if(!wrappeds.contains(wrappedReturn)){
                 wrappeds.add(wrappedReturn);
             }
@@ -87,5 +78,15 @@ public class ActionProxy implements InvocationHandler {
        return null;
     }
 
+    public void treatFutures(List<WrappedReturn> listWrapped){
+        for(int i=0; i<listWrapped.size(); i++){
 
+            WrappedReturn wrapped =  listWrapped.get(i);
+            if(wrapped.future.isDone()){
+
+                wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
+                listWrapped.remove(i);
+            }
+        }
+    }
 }

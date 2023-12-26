@@ -11,32 +11,36 @@ import java.util.function.Function;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class InvokerThreads implements Invoker{
-    List<Callable<String>> callableTasks = new ArrayList<>();
-    private ExecutorService executor ;
+public class InvokerThreads implements Invoker {
 
-    public final int maxMemory = 1000;
+    List<Callable<String>> callableTasks = new ArrayList<>();
+    private ExecutorService executor;
+
+    public final int maxMemory = 60;
 
     int memoryGettingUsed = 0;
     int memoryUsedTotal = 0;
-    public InvokerThreads(int numThreads){
+
+    public InvokerThreads(int numThreads) {
         executor = Executors.newFixedThreadPool(numThreads);
     }
-    public int getMemoryUsedTotal(){
-        return  memoryUsedTotal;
+
+    public int getMemoryUsedTotal() {
+        return memoryUsedTotal;
     }
 
-    public int getMemoryGettingUsed(){
-        return  memoryGettingUsed;
+    public int getMemoryGettingUsed() {
+        return memoryGettingUsed;
     }
-    public void setMemoryGettingUsed(int memoryGettingUsed){
+
+    public void setMemoryGettingUsed(int memoryGettingUsed) {
         lock.lock();
-        this.memoryGettingUsed-= memoryGettingUsed ;
+        this.memoryGettingUsed -= memoryGettingUsed;
         lock.unlock();
     }
 
-    public synchronized void addMemoryUse(int memoryGettingUsed){
-        this.memoryGettingUsed+= memoryGettingUsed ;
+    public synchronized void addMemoryUse(int memoryGettingUsed) {
+        this.memoryGettingUsed += memoryGettingUsed;
     }
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -44,43 +48,39 @@ public class InvokerThreads implements Invoker{
     @Override
     public Object execute(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, Observer observer) {
         long start = System.nanoTime();
-        Random r= new Random();
+        Random r = new Random();
         int memoryUsed = r.nextInt(500);
-        memoryUsedTotal +=memoryUsed;
+        memoryUsedTotal += memoryUsed;
         observer.putMemoryPairInvoker(this, memoryUsed);
         addMemoryUse(memoryUsed);
-        System.out.println("M invok: "+memoryGettingUsed);
         Object returns = action.apply(values);
         long end = System.nanoTime();
         long totalTime = end - start;
-        observer.putActionTimePair(action+"", totalTime);
-        observer.putMemoryPair(action+"", memoryUsed);
+        observer.putActionTimePair(action + "", totalTime);
+        observer.putMemoryPair(action + "", memoryUsed);
         return returns;
     }
 
-    public Future<String> submitTask(Callable<String> callableTask){
+    public Future<String> submitTask(Callable<String> callableTask) {
         callableTasks.add(callableTask);
         return executor.submit(callableTask);
     }
+
     public void executeAllCallableTask() throws InterruptedException {
         executor.invokeAll(callableTasks);
     }
 
 
-
-
-
-
-    public WrappedReturn executeAsync(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, int sleep, Observer observer) throws InterruptedException, ExecutionException {
+    public WrappedReturn executeAsync(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
         long start = System.nanoTime();
         Random r = new Random();
-        int memoryUsed =10;
-        memoryUsedTotal += memoryUsed;
-        observer.putMemoryPairInvoker(this, memoryUsed);
+
+        memoryUsedTotal += memoryUsage;
+        observer.putMemoryPairInvoker(this, memoryUsage);
 
         lock.lock();
         try {
-            addMemoryUse(memoryUsed);;
+            addMemoryUse(memoryUsage);
 
             Callable<Object> callable = () -> {
                 Object returns = action.apply(values);
@@ -88,28 +88,17 @@ public class InvokerThreads implements Invoker{
                 long totalTime = end - start;
 
                 observer.putActionTimePair(action + "", totalTime);
-                observer.putMemoryPair(action + "", memoryUsed);
+                observer.putMemoryPair(action + "", memoryUsage);
 
                 return returns;
             };
 
             // Create a Future object and submit the callable function to the executor
             Future<Object> future = executor.submit(callable);
-            WrappedReturn wrappedReturn = new WrappedReturn( this, future, memoryUsed);
             // Return the Future object immediately
-            return wrappedReturn;
+            return new WrappedReturn(this, future, memoryUsage);
         } finally {
             lock.unlock();
-
-
         }
     }
-
-
-
-
-
-
-
-
 }
