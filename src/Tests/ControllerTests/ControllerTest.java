@@ -14,17 +14,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import PolicyManager.RoundRobin;
-import PolicyManager.GreddyGroup;
+import PolicyManager.GreedyGroup;
 import PolicyManager.UniformGroup;
-
-import javax.sound.midi.Soundbank;
+import PolicyManager.BigGroup;
 
 public class ControllerTest {
 
     @Test
     public void test() throws ExecutionException, InterruptedException {
-        PolicyManager policyManager = new GreddyGroup();
+        PolicyManager policyManager = new GreedyGroup();
         Controller controller = new Controller(4, 2, policyManager, 4);
         Function<Map<String, Integer>, Integer> f = x -> x.get("x") + x.get("y");
         controller.registerAction("addAction", f, 256);
@@ -52,7 +50,7 @@ public class ControllerTest {
         System.out.println("\n\n UNIFORM GROUP: ");
 
         Random random = new Random();
-        List<Map<String, Integer>> input2 = IntStream.range(0, 15)
+        List<Map<String, Integer>> input2 = IntStream.range(0, 18)
                 .mapToObj(i -> Map.of("x", random.nextInt(10), "y", random.nextInt(10)))
                 .collect(Collectors.toList());
 
@@ -61,11 +59,20 @@ public class ControllerTest {
         Controller controller1 = new Controller(6, 8, policyManager1, 3);
         Function<Map<String, Integer>, Integer> f2 = x -> x.get("x") + x.get("y");
         controller1.registerAction("addAction", f2, 256);
-        List<WrappedReturn>  result3= (List<WrappedReturn>)controller1.invokeAsync("addAction", input2, null, 10);
+        List<WrappedReturn> result3= (List<WrappedReturn>)controller1.invokeAsync("addAction", input2, null, 10);
         for (WrappedReturn wrappedReturn : result3) {
             System.out.println(wrappedReturn.future.get());
         }
 
+        policyManager1 = new BigGroup();
+        controller1 = new Controller(6, 8, policyManager1, 6);
+        controller1.registerAction("addAction", f2, 256);
+        System.out.println("\n\n BIG GROUP: ");
+        result3= (List<WrappedReturn>)controller1.invokeAsync("addAction", input2, null, 10);
+        for (WrappedReturn wrappedReturn : result3) {
+
+            System.out.println(wrappedReturn.future.get());
+        }
         System.exit(0);
     }
 }

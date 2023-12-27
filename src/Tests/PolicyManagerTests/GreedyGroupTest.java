@@ -5,7 +5,7 @@ import ActionProxy.Foo;
 import ActionProxy.FooImpl;
 import Controller.Controller;
 import PolicyManager.PolicyManager;
-import PolicyManager.GreddyGroup;
+import PolicyManager.GreedyGroup;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
@@ -15,7 +15,7 @@ public class GreedyGroupTest {
     @Test
     public void testMain() throws ExecutionException, InterruptedException {
         // Create a PolicyManager instance
-        PolicyManager policyManager = new GreddyGroup();
+        PolicyManager policyManager = new GreedyGroup();
 
         // Create a Controller instance
         Controller controller = new Controller(4, 10, policyManager, 4);

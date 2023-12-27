@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class FooImpl implements Foo {
     @Override
-    public int doSomething(Object args){
+    public int doSomething(Object args) {
         System.out.println("cooking2");
         return 0;
     }
@@ -17,9 +17,10 @@ public class FooImpl implements Foo {
         System.out.println("cooking");
         return 0;
     }
+
     @Override
     public int bored(Object args) throws InterruptedException {
-        int result=0;
+        int result = 0;
 
         Thread.sleep(2000);
         System.out.println("im bored");
@@ -30,15 +31,15 @@ public class FooImpl implements Foo {
 
 
     @Override
-    public void multiplyByThree(Object args){
-        Map<String, Integer> a = (Map<String, Integer>)args;
+    public void multiplyByThree(Object args) {
+        Map<String, Integer> a = (Map<String, Integer>) args;
         int number = a.get("0");
     }
 
-    public void multiply(Object[] numbers){
+    public void multiply(Object[] numbers) {
 
-        int number = (int)numbers[0];
-        int number2 = (int)numbers[1];
-        System.out.println(number+" multplied by 3 is "+number*number2);
+        int number = (int) numbers[0];
+        int number2 = (int) numbers[1];
+        System.out.println(number + " multplied by 3 is " + number * number2);
     }
 }

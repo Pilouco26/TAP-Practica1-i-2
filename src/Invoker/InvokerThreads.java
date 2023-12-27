@@ -16,7 +16,7 @@ public class InvokerThreads implements Invoker {
     List<Callable<String>> callableTasks = new ArrayList<>();
     private ExecutorService executor;
 
-    public final int maxMemory = 4096;
+    public final int maxMemory = 768;
 
     int memoryGettingUsed = 0;
     int memoryUsedTotal = 0;

@@ -14,12 +14,11 @@ public class Observer {
     private Map<String, Long> actionsTime;
 
 
-
     public Observer(String invokerName) {
         this.assignedMemory = new HashMap<>();
         this.actionsTime = new HashMap<>();
         this.invokerName = invokerName;
-        this. assignedMemoryInvoker = new HashMap<Invoker, Integer>();
+        this.assignedMemoryInvoker = new HashMap<Invoker, Integer>();
 
     }
 
@@ -82,6 +81,7 @@ public class Observer {
         }
         return maxTime;
     }
+
     public Double calculateMinActionTime() {
         double minTime = Double.MAX_VALUE; // Set an initial maximum value
         for (Map.Entry<String, Long> entry : actionsTime.entrySet()) {
@@ -92,7 +92,6 @@ public class Observer {
         }
         return minTime;
     }
-
 
 
     public void putInvokerPair(String key, String value) {

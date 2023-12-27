@@ -21,23 +21,25 @@ public class ActionProxy implements InvocationHandler {
     private Controller controller;
     private Object target;
     public List<WrappedReturn> wrappeds = new ArrayList<>();
+
     public ActionProxy(Controller controller, Object target) {
         this.controller = controller;
         this.target = target;
     }
 
-    public static Object newInstance(Object target, Controller controller){
+    public static Object newInstance(Object target, Controller controller) {
         Class targetClass = target.getClass();
         Class interfaces[] = targetClass.getInterfaces();
         Method[] methods = targetClass.getMethods();
 
-        for(int i=0; i<methods.length; i++){
+        for (int i = 0; i < methods.length; i++) {
             Function<Map<String, Integer>, Integer> adaptedMethod = MethodToFunctionAdapter.adaptMethod(methods[i], targetClass);
             controller.registerAction(methods[i].getName(), adaptedMethod, 10);
         }
-        return Proxy. newProxyInstance(targetClass.getClassLoader(),
+        return Proxy.newProxyInstance(targetClass.getClassLoader(),
                 interfaces, new ActionProxy(controller, target));
     }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
@@ -48,11 +50,10 @@ public class ActionProxy implements InvocationHandler {
             treatFutures(wrappeds);
 
 
-            WrappedReturn  wrappedReturn =(WrappedReturn)controller.invokeAsync(invokerName, arg, wrappeds, 10);
-            if(!wrappeds.contains(wrappedReturn)){
+            WrappedReturn wrappedReturn = (WrappedReturn) controller.invokeAsync(invokerName, arg, wrappeds, 10);
+            if (!wrappeds.contains(wrappedReturn)) {
                 wrappeds.add(wrappedReturn);
             }
-
 
 
         } catch (Throwable e) {
@@ -63,26 +64,29 @@ public class ActionProxy implements InvocationHandler {
     }
 
     public static Map<String, Integer> toMap(Object[] objects) {
-        if(objects!=null){ Map<String, Integer> map = new HashMap<>();
+        if (objects != null) {
+            Map<String, Integer> map = new HashMap<>();
             for (int i = 0; i < objects.length; i++) {
-                if(objects[i] instanceof Object[]){
+                if (objects[i] instanceof Object[]) {
                     Object[] a = (Object[]) objects[i];
-                    for(int j=0; j<a.length; j++){
-                        map.put(Integer.toString(j), (Integer)a[j]);
+                    for (int j = 0; j < a.length; j++) {
+                        map.put(Integer.toString(j), (Integer) a[j]);
                     }
+                } else {
+                    map.put(Integer.toString(i), (Integer) objects[i]);
                 }
-                else{                map.put(Integer.toString(i), (Integer) objects[i]);}
 
             }
-            return map;}
-       return null;
+            return map;
+        }
+        return null;
     }
 
-    public void treatFutures(List<WrappedReturn> listWrapped){
-        for(int i=0; i<listWrapped.size(); i++){
+    public void treatFutures(List<WrappedReturn> listWrapped) {
+        for (int i = 0; i < listWrapped.size(); i++) {
 
-            WrappedReturn wrapped =  listWrapped.get(i);
-            if(wrapped.future.isDone()){
+            WrappedReturn wrapped = listWrapped.get(i);
+            if (wrapped.future.isDone()) {
 
                 wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
                 listWrapped.remove(i);
