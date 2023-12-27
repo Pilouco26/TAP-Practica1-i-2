@@ -21,7 +21,6 @@ public abstract class PolicyManager {
             lastOne += 1;
             lastOne = lastOne % size;
             invokerThreads = invokers.get(lastOne);
-            System.out.println("invoker " + lastOne + " gets selected");
             treatFutures(listWrapped);
         }
     }
@@ -35,6 +34,10 @@ public abstract class PolicyManager {
                 listWrapped.remove(i);
             }
         }
+    }
+
+    public boolean checkMemory(int memoryUsage, int maxMemory) {
+        return (lastOneCounter + 1) * memoryUsage > maxMemory;
     }
 
 }

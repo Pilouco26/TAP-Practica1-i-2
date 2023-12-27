@@ -29,7 +29,7 @@ public class Controller {
         this.invokersElements = invokersElements;
         this.groupSize = groupSize;
         for (int i = 0; i < invokersElements; i++) {
-            invokers.add(new InvokerThreads(threadingLevel));
+            invokers.add(new InvokerThreads(threadingLevel, 18000));
         }
 
     }
@@ -43,7 +43,7 @@ public class Controller {
         actionsRegistered.put(invokerName, actionRegistered);
     }
 
-    public Object invokeAsync(String invokerName, Object values, List<WrappedReturn> listWrapped, int memoryUsage) throws InterruptedException, ExecutionException {
+    public Object invokeAsync(String invokerName, Object values, List<WrappedReturn> listWrapped) throws InterruptedException, ExecutionException {
         Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName).getAction();
         Observer observer = observers.get(invokerName);
         if (observer == null) {
@@ -69,15 +69,20 @@ public class Controller {
             return result;
         } else {
             List<Map<String, Integer>> valuesCasted = (List<Map<String, Integer>>) values;
-            List<WrappedReturn> wrappedReturns = new ArrayList<WrappedReturn>();
-            for (int i = 0; i < valuesCasted.size(); i++) {
-                lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
-                WrappedReturn result = invokers.get(lastOne).executeAsync(action, valuesCasted.get(i), memoryUsage, observer);
-                wrappedReturns.add(result);
-                listWrapped.add(result);
-            }
-            return wrappedReturns;
+            return actionPack(valuesCasted, action, memoryUsage, observer);
         }
+    }
+
+    public List<WrappedReturn> actionPack(List<Map<String, Integer>> valuesCasted,  Function<Map<String, Integer>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
+        int lastOne;
+        List<WrappedReturn> wrappedReturns = new ArrayList<WrappedReturn>();
+        for (int i = 0; i < valuesCasted.size(); i++) {
+            lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
+            WrappedReturn result = invokers.get(lastOne).executeAsync(action, valuesCasted.get(i), memoryUsage, observer);
+            wrappedReturns.add(result);
+            listWrapped.add(result);
+        }
+        return wrappedReturns;
     }
 
     public void getAllTime() {

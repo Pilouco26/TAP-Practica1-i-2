@@ -16,13 +16,14 @@ public class InvokerThreads implements Invoker {
     List<Callable<String>> callableTasks = new ArrayList<>();
     private ExecutorService executor;
 
-    public final int maxMemory = 768;
+    public int maxMemory = 768;
 
     int memoryGettingUsed = 0;
     int memoryUsedTotal = 0;
 
-    public InvokerThreads(int numThreads) {
+    public InvokerThreads(int numThreads, int maxMemory) {
         executor = Executors.newFixedThreadPool(numThreads);
+        this.maxMemory = maxMemory;
     }
 
     public int getMemoryUsedTotal() {

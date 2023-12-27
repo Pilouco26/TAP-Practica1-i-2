@@ -1,4 +1,4 @@
-package Tests.ControllerTests;
+package Tests.PolicyManagerTests;
 
 import PolicyManager.PolicyManager;
 import WrappedReturn.WrappedReturn;
@@ -18,7 +18,7 @@ import PolicyManager.GreedyGroup;
 import PolicyManager.UniformGroup;
 import PolicyManager.BigGroup;
 
-public class ControllerTest {
+public class PolicyManagerTests {
 
     @Test
     public void test() throws ExecutionException, InterruptedException {
@@ -26,9 +26,9 @@ public class ControllerTest {
         Controller controller = new Controller(4, 2, policyManager, 4);
         Function<Map<String, Integer>, Integer> f = x -> x.get("x") + x.get("y");
         controller.registerAction("addAction", f, 256);
-        WrappedReturn result = (WrappedReturn)controller.invokeAsync("addAction", Map.of("x", 6, "y", 2), null, 0);
+        WrappedReturn result = (WrappedReturn) controller.invokeAsync("addAction", Map.of("x", 6, "y", 2), null );
         Future<Object> future = result.future;
-        
+
 
         System.out.println(future.get());
         List<Map<String, Integer>> input = Arrays.asList(new Map[]{
@@ -42,8 +42,9 @@ public class ControllerTest {
         });
 
 
-        List<WrappedReturn> result2 = (List<WrappedReturn>)controller.invokeAsync("addAction", input, null, 10);
-        for(int i=0; i<result2.size(); i++){
+        List<WrappedReturn> result2 = (List<WrappedReturn>) controller.invokeAsync("addAction", input, null);
+        assert(result2!=null);
+        for (int i = 0; i < result2.size(); i++) {
             System.out.println(result2.get(i).future.get());
         }
 
@@ -59,7 +60,8 @@ public class ControllerTest {
         Controller controller1 = new Controller(6, 8, policyManager1, 3);
         Function<Map<String, Integer>, Integer> f2 = x -> x.get("x") + x.get("y");
         controller1.registerAction("addAction", f2, 256);
-        List<WrappedReturn> result3= (List<WrappedReturn>)controller1.invokeAsync("addAction", input2, null, 10);
+        List<WrappedReturn> result3 = (List<WrappedReturn>) controller1.invokeAsync("addAction", input2, null);
+        assert(result3!=null);
         for (WrappedReturn wrappedReturn : result3) {
             System.out.println(wrappedReturn.future.get());
         }
@@ -68,7 +70,7 @@ public class ControllerTest {
         controller1 = new Controller(6, 8, policyManager1, 6);
         controller1.registerAction("addAction", f2, 256);
         System.out.println("\n\n BIG GROUP: ");
-        result3= (List<WrappedReturn>)controller1.invokeAsync("addAction", input2, null, 10);
+        result3 = (List<WrappedReturn>) controller1.invokeAsync("addAction", input2, null);
         for (WrappedReturn wrappedReturn : result3) {
 
             System.out.println(wrappedReturn.future.get());

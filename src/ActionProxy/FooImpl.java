@@ -7,15 +7,15 @@ import java.util.Map;
  */
 public class FooImpl implements Foo {
     @Override
-    public int doSomething(Object args) {
+    public Object doSomething(Object args) {
         System.out.println("cooking2");
         return 0;
     }
 
     @Override
-    public int doAnother(Object args) {
+    public Object doAnother(Object args) {
         System.out.println("cooking");
-        return 0;
+        return 5;
     }
 
     @Override

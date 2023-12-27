@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
@@ -21,6 +22,8 @@ public class ActionProxy implements InvocationHandler {
     private Controller controller;
     private Object target;
     public List<WrappedReturn> wrappeds = new ArrayList<>();
+
+    public List<Object> resultsList = new ArrayList<>();
 
     public ActionProxy(Controller controller, Object target) {
         this.controller = controller;
@@ -43,24 +46,18 @@ public class ActionProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-
             String invokerName = method.getName();
             Map<String, Integer> arg = toMap(args);
-
             treatFutures(wrappeds);
-
-
-            WrappedReturn wrappedReturn = (WrappedReturn) controller.invokeAsync(invokerName, arg, wrappeds, 10);
+            WrappedReturn wrappedReturn = (WrappedReturn) controller.invokeAsync(invokerName, arg, wrappeds);
             if (!wrappeds.contains(wrappedReturn)) {
                 wrappeds.add(wrappedReturn);
             }
-
-
         } catch (Throwable e) {
             System.out.println("Error: " + e);
         }
 
-        return 0;
+        return resultsList;
     }
 
     public static Map<String, Integer> toMap(Object[] objects) {
@@ -82,13 +79,14 @@ public class ActionProxy implements InvocationHandler {
         return null;
     }
 
-    public void treatFutures(List<WrappedReturn> listWrapped) {
+    public void treatFutures(List<WrappedReturn> listWrapped) throws ExecutionException, InterruptedException {
         for (int i = 0; i < listWrapped.size(); i++) {
 
             WrappedReturn wrapped = listWrapped.get(i);
             if (wrapped.future.isDone()) {
 
                 wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
+                resultsList.add(wrapped.future.get());
                 listWrapped.remove(i);
             }
         }

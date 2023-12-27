@@ -16,8 +16,6 @@ public class BigGroup extends PolicyManager {
             lastOne = lastOne % size;
             treatFutures(listWrapped);
         } else {
-            System.out.println("invoker " + lastOne + " gets selected");
-            System.out.println("\nMemory getting used: " + invokerThreads.getMemoryGettingUsed());
             lastOneCounter += 1;
         }
 
@@ -25,9 +23,6 @@ public class BigGroup extends PolicyManager {
         return lastOne;
     }
 
-    public boolean checkMemory(int memoryUsage, int maxMemory) {
-        return (lastOneCounter+1) * memoryUsage > maxMemory;
-    }
 }
 
 

@@ -1,4 +1,4 @@
-package Tests.PolicyManagerTests;
+package Tests.ActionProxy;
 
 import ActionProxy.ActionProxy;
 import ActionProxy.FooImpl;
@@ -8,12 +8,13 @@ import PolicyManager.PolicyManager;
 import PolicyManager.RoundRobin;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RobinRoundTest {
+public class ActionProxyTest {
 
     @Test
-    public void testMain() throws ExecutionException, InterruptedException {
+    public void testMain() gi {
         // Create a PolicyManager instance
         PolicyManager policyManager = new RoundRobin();
 
@@ -24,12 +25,19 @@ public class RobinRoundTest {
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
         // Record the start time12
         long start = System.currentTimeMillis();
-
+        List<Object> results = null;
+        List<Object> results2 = null;
         // Execute the loop ten times
         for (int i = 0; i < 100000; i++) {
             System.out.println("iteracio: " + i);
-            aFoo.doAnother(5);
-            aFoo.doSomething(0);
+            results = (List<Object>) aFoo.doAnother(5);
+            results2 = (List<Object>) aFoo.doSomething(0);
+        }
+
+        /*Return of functions*/
+        for (Object result : results2) {
+            System.out.println(result);
+            assert ((int) result >= 0);
         }
 
         // Record the end time
