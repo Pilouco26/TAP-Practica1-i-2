@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 public class ActionProxyTest {
 
     @Test
-    public void testMain() gi {
+    public void testMain() {
         // Create a PolicyManager instance
         PolicyManager policyManager = new RoundRobin();
 
