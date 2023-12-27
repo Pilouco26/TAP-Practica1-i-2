@@ -48,7 +48,7 @@ public class ActionProxy implements InvocationHandler {
             treatFutures(wrappeds);
 
 
-            WrappedReturn  wrappedReturn =controller.invokeAsync(invokerName, arg, wrappeds, 10);
+            WrappedReturn  wrappedReturn =(WrappedReturn)controller.invokeAsync(invokerName, arg, wrappeds, 10);
             if(!wrappeds.contains(wrappedReturn)){
                 wrappeds.add(wrappedReturn);
             }

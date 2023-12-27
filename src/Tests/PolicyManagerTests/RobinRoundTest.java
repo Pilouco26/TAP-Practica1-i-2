@@ -17,11 +17,10 @@ public class RobinRoundTest {
         PolicyManager policyManager = new RoundRobin();
 
         // Create a Controller instance
-        Controller controller = new Controller(4, 10, policyManager);
+        Controller controller = new Controller(4, 10, policyManager, 4);
 
         // Create a Foo instance using ActionProxy
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
-
         // Record the start time
         long start = System.currentTimeMillis();
 

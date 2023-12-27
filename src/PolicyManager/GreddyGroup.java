@@ -17,18 +17,22 @@ public class GreddyGroup implements PolicyManager{
             System.out.println("\nMemory getting used: "+ invokerThreads.getMemoryGettingUsed());
         }
         else{
-            while(invokerThreads.getMemoryGettingUsed()>=invokerThreads.maxMemory){
-                lastOne+=1;
-                lastOne = lastOne % size;
-                invokerThreads= invokers.get(lastOne);
-                treatFutures(listWrapped);
-            }
+            overMemoryUsage( invokerThreads,  size,  invokers, listWrapped);
         }
 
 
         return lastOne;
     }
 
+    public void overMemoryUsage(InvokerThreads invokerThreads, int size, List<InvokerThreads> invokers,List<WrappedReturn> listWrapped){
+        while(invokerThreads.getMemoryGettingUsed()>=invokerThreads.maxMemory){
+            lastOne+=1;
+            lastOne = lastOne % size;
+            invokerThreads= invokers.get(lastOne);
+            System.out.println("invoker "+lastOne+" gets selected");
+            if(!(listWrapped==null)){treatFutures(listWrapped);}
+        }
+    }
     public void treatFutures(List<WrappedReturn> listWrapped){
         for(int i=0; i<listWrapped.size(); i++){
 

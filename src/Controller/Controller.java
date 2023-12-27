@@ -12,17 +12,22 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class Controller {
-    public Map<String, Function<Map<String, Integer>, Integer>> actionsRegistered= new HashMap<>();
+    public Map<String, ActionRegistered> actionsRegistered= new HashMap<>();
     public Map<String, Invoker> invokerMap;
     public int lastOne;
     public PolicyManager policyManager;
 
+    public  List<WrappedReturn> listWrapped= new ArrayList<WrappedReturn>();
+
     public Map<String,Observer> observers = new HashMap<String, Observer>();
     int invokersElements;
     List<InvokerThreads> invokers = new ArrayList<InvokerThreads>();
-    public Controller(int invokersElements, int threadingLevel, PolicyManager policyManager){
+
+    int groupSize;
+    public Controller(int invokersElements, int threadingLevel, PolicyManager policyManager, int groupSize){
         this.policyManager = policyManager;
         this.invokersElements = invokersElements;
+        this.groupSize = groupSize;
         for(int i=0; i<invokersElements; i++) {
             invokers.add(new InvokerThreads(threadingLevel));
         }
@@ -33,21 +38,43 @@ public class Controller {
         return this.invokers;
     }
     public void registerAction(String invokerName, Function<Map<String, Integer>, Integer> action, int memoryUsage) {
-        actionsRegistered.put(invokerName, action);
+        ActionRegistered actionRegistered = new ActionRegistered(action, memoryUsage);
+        actionsRegistered.put(invokerName, actionRegistered);
     }
-    public WrappedReturn invokeAsync(String invokerName, Map<String, Integer> values, List<WrappedReturn> listWrapped, int memoryUsage) throws InterruptedException, ExecutionException {
-        Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName);
+    public Object invokeAsync(String invokerName, Object values, List<WrappedReturn> listWrapped, int memoryUsage) throws InterruptedException, ExecutionException {
+        Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName).getAction();
         Observer observer = observers.get(invokerName);
         if(observer==null){
             observer = new Observer(invokerName);
             observers.put(invokerName, observer);
         }
-        lastOne =  policyManager.selectInvoker(invokersElements, invokers, listWrapped);
-        WrappedReturn result = invokers.get(lastOne).executeAsync(action, values, memoryUsage, observer);
 
-       return result;
+        if(listWrapped == null){
+            return execute(values, this.listWrapped, action, actionsRegistered.get(invokerName).getMemoryUsage(), observer);
+        }
+        else { return execute(values, listWrapped, action, actionsRegistered.get(invokerName).getMemoryUsage(), observer);}
+
+
     }
-
+    public Object execute(Object values, List<WrappedReturn> listWrapped, Function<Map<String, Integer>, Integer> action, int memoryUsage,  Observer observer) throws ExecutionException, InterruptedException {
+        if(values instanceof Map) {
+            lastOne =  policyManager.selectInvoker(groupSize, invokers, listWrapped);
+            WrappedReturn result = invokers.get(lastOne).executeAsync(action, (Map<String, Integer>) values, memoryUsage, observer);
+            listWrapped.add(result);
+            return result;
+        }
+        else {
+            List<Map<String, Integer>> valuesCasted = (List<Map<String, Integer>>)values;
+            List<WrappedReturn> wrappedReturns = new ArrayList<WrappedReturn>();
+            for(int i=0; i<valuesCasted.size(); i++){
+                lastOne =  policyManager.selectInvoker(groupSize, invokers, listWrapped);
+                WrappedReturn result = invokers.get(lastOne).executeAsync(action, valuesCasted.get(i), memoryUsage, observer);
+                wrappedReturns.add(result);
+                listWrapped.add(result);
+            }
+            return wrappedReturns;
+        }
+    }
     public void getAllTime(){
         for (Map.Entry<String, Observer> entry : observers.entrySet()) {
             // Code block to execute for each entry

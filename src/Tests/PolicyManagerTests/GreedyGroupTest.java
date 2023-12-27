@@ -18,7 +18,7 @@ public class GreedyGroupTest {
         PolicyManager policyManager = new GreddyGroup();
 
         // Create a Controller instance
-        Controller controller = new Controller(4, 10, policyManager);
+        Controller controller = new Controller(4, 10, policyManager, 4);
 
         // Create a Foo instance using ActionProxy
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
