@@ -18,7 +18,7 @@ public class GreedyGroupTest {
         PolicyManager policyManager = new GreedyGroup();
 
         // Create a Controller instance
-        Controller controller = new Controller(4, 10, policyManager, 4);
+        Controller controller = new Controller(4, 10, policyManager, 4, 1024);
 
         // Create a Foo instance using ActionProxy
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
@@ -27,7 +27,7 @@ public class GreedyGroupTest {
         long start = System.currentTimeMillis();
 
         // Execute the loop ten times
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             System.out.println("iteracio: " + i);
             aFoo.doAnother(5);
         }

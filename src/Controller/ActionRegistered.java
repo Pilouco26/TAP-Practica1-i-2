@@ -6,16 +6,16 @@ import java.util.function.Function;
 public class ActionRegistered {
     private int memoryUsage;
 
-    private Function<Map<String, Integer>, Integer> action;
+    private Function<Map<String, ?>, Integer> action;
 
-    public ActionRegistered(Function<Map<String, Integer>, Integer> action, int memoryUsage) {
+    public ActionRegistered(Function<Map<String, ?>, Integer> action, int memoryUsage) {
 
         this.action = action;
         this.memoryUsage = memoryUsage;
 
     }
 
-    public Function<Map<String, Integer>, Integer> getAction() {
+    public Function<Map<String, ?>, Integer> getAction() {
         return action;
     }
 

@@ -23,8 +23,8 @@ public class PolicyManagerTests {
     @Test
     public void test() throws ExecutionException, InterruptedException {
         PolicyManager policyManager = new GreedyGroup();
-        Controller controller = new Controller(4, 2, policyManager, 4);
-        Function<Map<String, Integer>, Integer> f = x -> x.get("x") + x.get("y");
+        Controller controller = new Controller(4, 2, policyManager, 4, 512);
+        Function<Map<String, ?>, Integer> f = map -> (Integer) map.get("x") + (Integer) map.get("y");
         controller.registerAction("addAction", f, 256);
         WrappedReturn result = (WrappedReturn) controller.invokeAsync("addAction", Map.of("x", 6, "y", 2), null );
         Future<Object> future = result.future;
@@ -57,8 +57,8 @@ public class PolicyManagerTests {
 
 
         PolicyManager policyManager1 = new UniformGroup();
-        Controller controller1 = new Controller(6, 8, policyManager1, 3);
-        Function<Map<String, Integer>, Integer> f2 = x -> x.get("x") + x.get("y");
+        Controller controller1 = new Controller(6, 8, policyManager1, 3, 1024);
+        Function<Map<String, ?>, Integer> f2 = map -> (Integer) map.get("x") + (Integer) map.get("y");
         controller1.registerAction("addAction", f2, 256);
         List<WrappedReturn> result3 = (List<WrappedReturn>) controller1.invokeAsync("addAction", input2, null);
         assert(result3!=null);
@@ -67,7 +67,7 @@ public class PolicyManagerTests {
         }
 
         policyManager1 = new BigGroup();
-        controller1 = new Controller(6, 8, policyManager1, 6);
+        controller1 = new Controller(6, 8, policyManager1, 6, 512);
         controller1.registerAction("addAction", f2, 256);
         System.out.println("\n\n BIG GROUP: ");
         result3 = (List<WrappedReturn>) controller1.invokeAsync("addAction", input2, null);
@@ -78,3 +78,4 @@ public class PolicyManagerTests {
         System.exit(0);
     }
 }
+

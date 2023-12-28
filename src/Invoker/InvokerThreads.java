@@ -16,7 +16,7 @@ public class InvokerThreads implements Invoker {
     List<Callable<String>> callableTasks = new ArrayList<>();
     private ExecutorService executor;
 
-    public int maxMemory = 768;
+    public int maxMemory = 512;
 
     int memoryGettingUsed = 0;
     int memoryUsedTotal = 0;
@@ -72,7 +72,7 @@ public class InvokerThreads implements Invoker {
     }
 
 
-    public WrappedReturn executeAsync(Function<Map<String, Integer>, Integer> action, Map<String, Integer> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
+    public WrappedReturn executeAsync(Function<Map<String, ?>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
         long start = System.nanoTime();
         Random r = new Random();
 

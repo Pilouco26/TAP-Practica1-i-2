@@ -6,15 +6,24 @@ import java.util.Map;
  * Created by milax on 20/10/15.
  */
 public class FooImpl implements Foo {
+
+
     @Override
     public Object doSomething(Object args) {
+        Object a = args;
+        Map<String, Integer> map = (Map<String, Integer>) a;
+        System.out.println(map.get("0"));
+        System.out.println(a);
         System.out.println("cooking2");
+
+        for(int i=0; i<10000; i++){doAnother(args);}
         return 0;
     }
 
     @Override
     public Object doAnother(Object args) {
         System.out.println("cooking");
+
         return 5;
     }
 

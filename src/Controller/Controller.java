@@ -24,12 +24,12 @@ public class Controller {
 
     int groupSize;
 
-    public Controller(int invokersElements, int threadingLevel, PolicyManager policyManager, int groupSize) {
+    public Controller(int invokersElements, int threadingLevel, PolicyManager policyManager, int groupSize, int maxMemoryThreads) {
         this.policyManager = policyManager;
         this.invokersElements = invokersElements;
         this.groupSize = groupSize;
         for (int i = 0; i < invokersElements; i++) {
-            invokers.add(new InvokerThreads(threadingLevel, 18000));
+            invokers.add(new InvokerThreads(threadingLevel, maxMemoryThreads));
         }
 
     }
@@ -38,13 +38,13 @@ public class Controller {
         return this.invokers;
     }
 
-    public void registerAction(String invokerName, Function<Map<String, Integer>, Integer> action, int memoryUsage) {
+    public void registerAction(String invokerName, Function<Map<String, ?>, Integer> action, int memoryUsage) {
         ActionRegistered actionRegistered = new ActionRegistered(action, memoryUsage);
         actionsRegistered.put(invokerName, actionRegistered);
     }
 
     public Object invokeAsync(String invokerName, Object values, List<WrappedReturn> listWrapped) throws InterruptedException, ExecutionException {
-        Function<Map<String, Integer>, Integer> action = actionsRegistered.get(invokerName).getAction();
+        Function<Map<String, ?>, Integer> action = actionsRegistered.get(invokerName).getAction();
         Observer observer = observers.get(invokerName);
         if (observer == null) {
             observer = new Observer(invokerName);
@@ -60,28 +60,31 @@ public class Controller {
 
     }
 
-    public Object execute(Object values, List<WrappedReturn> listWrapped, Function<Map<String, Integer>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
+    public Object execute(Object values, List<WrappedReturn> listWrapped, Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
         int lastOne;
         if (values instanceof Map) {
             lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
-            WrappedReturn result = invokers.get(lastOne).executeAsync(action, (Map<String, Integer>) values, memoryUsage, observer);
+            WrappedReturn result = invokers.get(lastOne).executeAsync(action, (Map<String, Object>) values, memoryUsage, observer);
             listWrapped.add(result);
             return result;
         } else {
-            List<Map<String, Integer>> valuesCasted = (List<Map<String, Integer>>) values;
+            List<Map<String, Object>> valuesCasted = (List<Map<String, Object>>) values;
             return actionPack(valuesCasted, action, memoryUsage, observer);
         }
     }
 
-    public List<WrappedReturn> actionPack(List<Map<String, Integer>> valuesCasted,  Function<Map<String, Integer>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
+    public List<WrappedReturn> actionPack(List<Map<String, Object>> valuesCasted,  Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
         int lastOne;
         List<WrappedReturn> wrappedReturns = new ArrayList<WrappedReturn>();
-        for (int i = 0; i < valuesCasted.size(); i++) {
-            lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
-            WrappedReturn result = invokers.get(lastOne).executeAsync(action, valuesCasted.get(i), memoryUsage, observer);
-            wrappedReturns.add(result);
-            listWrapped.add(result);
+        if(valuesCasted!=null){
+            for (int i = 0; i < valuesCasted.size(); i++) {
+                lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
+                WrappedReturn result = invokers.get(lastOne).executeAsync(action, valuesCasted.get(i), memoryUsage, observer);
+                wrappedReturns.add(result);
+                listWrapped.add(result);
+            }
         }
+
         return wrappedReturns;
     }
 
