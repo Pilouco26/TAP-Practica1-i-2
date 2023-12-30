@@ -27,7 +27,6 @@ public class ReadBooks implements ReadBook{
         MapAndWord mapAndWord = (MapAndWord) map.get("0");
         Map<String, Integer> wordCountMap = mapAndWord.getMap();
         String currentWord = mapAndWord.getWord();
-        System.out.println(currentWord);
         if (!wordCountMap.containsKey(currentWord)) {
             wordCountMap.put(currentWord, 1);
         } else {

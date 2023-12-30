@@ -17,7 +17,6 @@ public class RoundRobin extends PolicyManager {
         }
         lastOne += 1;
         lastOne = lastOne % size;
-        System.out.println("round robin invoker: "+lastOne);
         return lastOne;
     }
 

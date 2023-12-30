@@ -74,7 +74,6 @@ public class InvokerThreads implements Invoker {
 
     public WrappedReturn executeAsync(Function<Map<String, ?>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
         long start = System.nanoTime();
-        Random r = new Random();
 
         memoryUsedTotal += memoryUsage;
         observer.putMemoryPairInvoker(this, memoryUsage);

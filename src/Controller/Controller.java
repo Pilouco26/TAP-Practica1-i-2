@@ -65,6 +65,8 @@ public class Controller {
         if (values instanceof Map) {
             lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
             WrappedReturn result = invokers.get(lastOne).executeAsync(action, (Map<String, Object>) values, memoryUsage, observer);
+            result.future.get();
+
             listWrapped.add(result);
             return result;
         } else {

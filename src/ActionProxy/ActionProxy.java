@@ -54,7 +54,7 @@ public class ActionProxy implements InvocationHandler {
                 wrappeds.add(wrappedReturn);
             }
             treatFutures(wrappeds);
-        return resultsList;
+        return wrappeds;
     }
 
     public static Map<String, Object> toMap(Object[] objects) {
@@ -81,10 +81,12 @@ public class ActionProxy implements InvocationHandler {
 
             WrappedReturn wrapped = listWrapped.get(i);
             if (wrapped.future.isDone()) {
+                if(!wrapped.future.isCancelled()){
+                    wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
+                    resultsList.add(wrapped.future.get());
+                    listWrapped.remove(i);
+                }
 
-                wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
-                resultsList.add(wrapped.future.get());
-                listWrapped.remove(i);
             }
         }
     }
