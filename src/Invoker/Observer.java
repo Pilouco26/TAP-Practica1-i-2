@@ -5,8 +5,6 @@ import java.util.Map;
 
 public class Observer {
 
-    private Map<String, String> assignedInvokers;
-
     private String invokerName;
     private Map<String, Integer> assignedMemory;
 
@@ -22,30 +20,11 @@ public class Observer {
 
     }
 
-    public Map<String, String> getAssignedInvokers() {
-        return assignedInvokers;
+
+    public String getInvokerName() {
+        return invokerName;
     }
 
-    public void setAssignedInvokers(Map<String, String> assignedInvokers) {
-        this.assignedInvokers = assignedInvokers;
-    }
-
-    public Map<String, Integer> getAssignedMemory() {
-        return assignedMemory;
-    }
-
-
-    public void setAssignedMemory(Map<String, Integer> assignedMemory) {
-        this.assignedMemory = assignedMemory;
-    }
-
-    public Map<String, Long> getActionsTime() {
-        return actionsTime;
-    }
-
-    public void setActionsTime(Map<String, Long> actionsTime) {
-        this.actionsTime = actionsTime;
-    }
 
     public Double calculateAverageActionTime() {
         double totalTime = 0.0;
@@ -61,14 +40,6 @@ public class Observer {
             totalTime += entry.getValue();
         }
         return totalTime / assignedMemory.size();
-    }
-
-    public Double calculateAverageInvokerMemory() {
-        double totalTime = 0.0;
-        for (Map.Entry<Invoker, Integer> entry : assignedMemoryInvoker.entrySet()) {
-            totalTime += entry.getValue();
-        }
-        return totalTime / assignedMemoryInvoker.size();
     }
 
     public Double calculateMaxActionTime() {
@@ -93,10 +64,6 @@ public class Observer {
         return minTime;
     }
 
-
-    public void putInvokerPair(String key, String value) {
-        assignedInvokers.put(key, value);
-    }
 
     public void putMemoryPair(String invokerName, int value) {
         assignedMemory.put(invokerName, value);

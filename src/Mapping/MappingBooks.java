@@ -9,14 +9,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.Clock;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import PolicyManager.RoundRobin;
 import PolicyManager.UniformGroup;
+import PolicyManager.GreedyGroup;
 import WrappedReturn.WrappedReturn;
 
 
@@ -26,17 +25,14 @@ public class MappingBooks {
 
         long startTime = System.currentTimeMillis();
         System.out.println("UniformGroup, 4 invokers, 10Threads, 1024MB per invoker");
-        PolicyManager policyManager = new UniformGroup();
+        PolicyManager policyManager = new GreedyGroup();
         Controller controller = new Controller(4, 10, policyManager, 4, 1024);
         Map<String, Integer> wordCountMap = new ConcurrentHashMap<>();
-        ReentrantLock lock = new ReentrantLock();
-        ReentrantReadWriteLock mapLock = new ReentrantReadWriteLock();
-
         // Create a Foo instance using ActionProxy
-        DecoratorReadBook decoratorReadBook = (DecoratorReadBook) ActionProxy.newInstance(new DecoratorReadBooks(),
+        ReadBook readBook = (ReadBook) ActionProxy.newInstance(new ReadBooks(),
                 controller);
-        for (int j = 1; j < 10; j++) {
-
+        for (int j = 1; j < 11; j++) {
+            System.out.println(j);
             Object results = null;
 
             // Create a Controller instance
@@ -44,14 +40,14 @@ public class MappingBooks {
 
             try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\Mapping\\Books\\book" + j + ".txt"))) {
                 String line;
-                List<String> currentList = new ArrayList<>();
+                List<String> currentList = new CopyOnWriteArrayList<>();
 
                 while ((line = reader.readLine()) != null) {
                     String[] words = line.split(" ");
                     for (String word : words) {
 
                         ListAndWord listAndWord = new ListAndWord(word, currentList);
-                        decoratorReadBook.filterPonctuation(listAndWord);
+                        readBook.filterPonctuation(listAndWord);
 
 
                         if (currentList.size() == 10) {
@@ -59,22 +55,20 @@ public class MappingBooks {
                             for (String currentWord : currentList) {
                                 MapAndWord mapAndWord = new MapAndWord(currentWord, wordCountMap);
 
-                                decoratorReadBook.putMap(mapAndWord);
+                                readBook.putMap(mapAndWord);
 
                             }
 
                             currentList.clear();
                         }
                     }
-
-
                 }
 
                 // Map the remaining words in the current list to the number of times they appear in the book
                 if (!currentList.isEmpty()) {
                     for (String currentWord : currentList) {
                         MapAndWord mapAndWord = new MapAndWord(currentWord, wordCountMap);
-                        results = decoratorReadBook.putMap(mapAndWord);
+                        results = readBook.putMap(mapAndWord);
 
                     }
                 }
@@ -102,9 +96,22 @@ public class MappingBooks {
 
 
         }
-        decoratorReadBook.printMapCount(wordCountMap);
+        CompletableFuture<Void> printMapCountFuture = CompletableFuture.runAsync(() -> {
+            // Assuming readBook is an instance of your ReadBook class
+            readBook.printMapCount(wordCountMap);
+        });
+
+        try {
+            // Wait for the asynchronous task to complete
+            printMapCountFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace(); // Handle exceptions appropriately
+        }
+
+
         long endTime = System.currentTimeMillis();
-        System.out.println("Time needed to read 10 books:"+((endTime-startTime)/1000)+"s");
+        Thread.sleep(4000);
+        System.out.println("Time needed to read 10 books:" + ((endTime - startTime) / 1000) + "s");
         System.exit(0);
     }
 }

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
@@ -21,9 +23,8 @@ public class ActionProxy implements InvocationHandler {
     private final ReentrantLock lock = new ReentrantLock();
     private Controller controller;
     private Object target;
-    public List<WrappedReturn> wrappeds = new ArrayList<>();
+    public CopyOnWriteArrayList<WrappedReturn> wrappeds = new CopyOnWriteArrayList<WrappedReturn>();
 
-    public List<Object> resultsList = new ArrayList<>();
 
     public ActionProxy(Controller controller, Object target) {
         this.controller = controller;
@@ -76,16 +77,13 @@ public class ActionProxy implements InvocationHandler {
         return null;
     }
 
-    public void treatFutures(List<WrappedReturn> listWrapped) throws ExecutionException, InterruptedException {
+    public void treatFutures(CopyOnWriteArrayList<WrappedReturn> listWrapped) throws ExecutionException, InterruptedException {
         for (int i = 0; i < listWrapped.size(); i++) {
 
             WrappedReturn wrapped = listWrapped.get(i);
             if (wrapped.future.isDone()) {
-                if(!wrapped.future.isCancelled()){
-                    wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
-                    resultsList.add(wrapped.future.get());
-                    listWrapped.remove(i);
-                }
+                wrapped.getInvoker().setMemoryGettingUsed(wrapped.memoryUsed);
+                listWrapped.remove(i);
 
             }
         }

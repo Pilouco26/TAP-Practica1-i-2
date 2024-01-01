@@ -21,11 +21,19 @@ public abstract class PolicyManager {
             lastOne += 1;
             lastOne = lastOne % size;
             invokerThreads = invokers.get(lastOne);
-            treatFutures(listWrapped);
+            int returns = treatFutures(listWrapped);
+            if (returns == 0) {
+                //Just in case synchro
+                for (int i = 0; i < size; i++) {
+                    invokers.get(i).setMemoryGettingUsedToZero();
+                }
+            }
+
+
         }
     }
 
-    public void treatFutures(List<WrappedReturn> listWrapped) {
+    public int treatFutures(List<WrappedReturn> listWrapped) {
         for (int i = 0; i < listWrapped.size(); i++) {
 
             WrappedReturn wrapped = listWrapped.get(i);
@@ -34,6 +42,7 @@ public abstract class PolicyManager {
                 listWrapped.remove(i);
             }
         }
+        return listWrapped.size();
     }
 
     public boolean checkMemory(int memoryUsage, int maxMemory) {

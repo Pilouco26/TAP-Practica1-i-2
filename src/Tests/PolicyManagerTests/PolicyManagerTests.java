@@ -21,7 +21,7 @@ import PolicyManager.BigGroup;
 public class PolicyManagerTests {
 
     @Test
-    public void test() throws ExecutionException, InterruptedException {
+    public void test() throws ExecutionException, InterruptedException, NoSuchMethodException {
         PolicyManager policyManager = new GreedyGroup();
         Controller controller = new Controller(4, 2, policyManager, 4, 512);
         Function<Map<String, ?>, Integer> f = map -> (Integer) map.get("x") + (Integer) map.get("y");

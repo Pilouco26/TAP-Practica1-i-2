@@ -1,5 +1,6 @@
 package Controller;
 
+import Decorator.DecoratorInvoker;
 import Invoker.InvokerThreads;
 import Invoker.Invoker;
 import Invoker.Observer;
@@ -7,35 +8,30 @@ import PolicyManager.PolicyManager;
 import WrappedReturn.WrappedReturn;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class Controller {
     public Map<String, ActionRegistered> actionsRegistered = new HashMap<>();
-    public Map<String, Invoker> invokerMap;
+
     public PolicyManager policyManager;
 
-    public List<WrappedReturn> listWrapped = new ArrayList<WrappedReturn>();
+    public CopyOnWriteArrayList<WrappedReturn> listWrapped = new CopyOnWriteArrayList<WrappedReturn>();
 
     public Map<String, Observer> observers = new HashMap<String, Observer>();
-    int invokersElements;
-    List<InvokerThreads> invokers = new ArrayList<InvokerThreads>();
+    private List<InvokerThreads> invokers = new ArrayList<InvokerThreads>();
 
     int groupSize;
 
     public Controller(int invokersElements, int threadingLevel, PolicyManager policyManager, int groupSize, int maxMemoryThreads) {
         this.policyManager = policyManager;
-        this.invokersElements = invokersElements;
         this.groupSize = groupSize;
         for (int i = 0; i < invokersElements; i++) {
-            invokers.add(new InvokerThreads(threadingLevel, maxMemoryThreads));
+            invokers.add(new DecoratorInvoker(new InvokerThreads(threadingLevel, maxMemoryThreads)));
         }
 
-    }
-
-    public List<InvokerThreads> getInvokers() {
-        return this.invokers;
     }
 
     public void registerAction(String invokerName, Function<Map<String, ?>, Integer> action, int memoryUsage) {
@@ -43,7 +39,7 @@ public class Controller {
         actionsRegistered.put(invokerName, actionRegistered);
     }
 
-    public Object invokeAsync(String invokerName, Object values, List<WrappedReturn> listWrapped) throws InterruptedException, ExecutionException {
+    public Object invokeAsync(String invokerName, Object values, CopyOnWriteArrayList<WrappedReturn> listWrapped) throws InterruptedException, ExecutionException, NoSuchMethodException {
         Function<Map<String, ?>, Integer> action = actionsRegistered.get(invokerName).getAction();
         Observer observer = observers.get(invokerName);
         if (observer == null) {
@@ -60,12 +56,11 @@ public class Controller {
 
     }
 
-    public Object execute(Object values, List<WrappedReturn> listWrapped, Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
+    public Object execute(Object values, CopyOnWriteArrayList<WrappedReturn> listWrapped, Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException, NoSuchMethodException {
         int lastOne;
         if (values instanceof Map) {
             lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
             WrappedReturn result = invokers.get(lastOne).executeAsync(action, (Map<String, Object>) values, memoryUsage, observer);
-            result.future.get();
 
             listWrapped.add(result);
             return result;
@@ -75,10 +70,10 @@ public class Controller {
         }
     }
 
-    public List<WrappedReturn> actionPack(List<Map<String, Object>> valuesCasted,  Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException {
+    public CopyOnWriteArrayList<WrappedReturn> actionPack(List<Map<String, Object>> valuesCasted, Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException, NoSuchMethodException {
         int lastOne;
-        List<WrappedReturn> wrappedReturns = new ArrayList<WrappedReturn>();
-        if(valuesCasted!=null){
+        CopyOnWriteArrayList<WrappedReturn> wrappedReturns = new CopyOnWriteArrayList<WrappedReturn>();
+        if (valuesCasted != null) {
             for (int i = 0; i < valuesCasted.size(); i++) {
                 lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
                 WrappedReturn result = invokers.get(lastOne).executeAsync(action, valuesCasted.get(i), memoryUsage, observer);
@@ -90,49 +85,4 @@ public class Controller {
         return wrappedReturns;
     }
 
-    public void getAllTime() {
-        for (Map.Entry<String, Observer> entry : observers.entrySet()) {
-            // Code block to execute for each entry
-            String key = entry.getKey();
-            Observer observer = entry.getValue();
-            System.out.println("AVERAGE TIME IS: " + key + ": " + observer.calculateAverageActionTime());
-            // Use 'key' and 'observer' variables here
-        }
-    }
-
-    public void getMax() {
-        for (Map.Entry<String, Observer> entry : observers.entrySet()) {
-            String key = entry.getKey();
-            Observer observer = entry.getValue();
-            System.out.println("MAX TIME IS: " + key + ": " + observer.calculateMaxActionTime());
-        }
-    }
-
-    public void getMin() {
-        for (Map.Entry<String, Observer> entry : observers.entrySet()) {
-            String key = entry.getKey();
-            Observer observer = entry.getValue();
-            System.out.println("MIN TIME IS: " + key + ": " + observer.calculateMinActionTime());
-        }
-    }
-
-    public void getMemory() {
-        for (Map.Entry<String, Observer> entry : observers.entrySet()) {
-            String key = entry.getKey();
-            Observer observer = entry.getValue();
-            System.out.println("MEMORY AVG IS: " + key + ": " + observer.calculateAverageActionMemory());
-        }
-    }
-
-    public void getMemoryForEachInvoker() {
-        for (int i = 0; i < invokers.size(); i++) {
-            System.out.println("invoker" + i + ": " + invokers.get(i).getMemoryUsedTotal() + "kb");
-        }
-    }
-
-    public void getMemoryGettingUsedForEachInvoker() {
-        for (int i = 0; i < invokers.size(); i++) {
-            System.out.println("invoker" + i + ": " + invokers.get(i).getMemoryGettingUsed() + "kb");
-        }
-    }
 }

@@ -13,7 +13,7 @@ public class ReadBooks implements ReadBook{
         List<String> currentList = listAndWord.getCurrentList();
         String word = listAndWord.getWord();
         String lowercaseWord = word.toLowerCase();
-        String filteredWord = lowercaseWord.replaceAll("[,.\\-_!?;:”)—“'(‘™’]", "");
+        String filteredWord = lowercaseWord.replaceAll("[,.\\-_!?;:”)—“'(‘™’\"123456789£•|]", "");
 
         currentList.add(filteredWord);
 

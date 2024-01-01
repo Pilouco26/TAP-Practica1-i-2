@@ -11,8 +11,6 @@ public class GreedyGroup extends PolicyManager {
         InvokerThreads invokerThreads = invokers.get(lastOne);
         int memoryGettingUsed = invokerThreads.getMemoryGettingUsed();
         if (memoryGettingUsed < invokerThreads.maxMemory) {
-            System.out.println("invoker " + lastOne + " gets selected");
-            System.out.println("\nMemory getting used: " + invokerThreads.getMemoryGettingUsed());
         } else {
             overMemoryUsage(invokerThreads, size, invokers, listWrapped);
         }

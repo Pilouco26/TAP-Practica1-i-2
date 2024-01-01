@@ -13,15 +13,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class InvokerThreads implements Invoker {
 
-    List<Callable<String>> callableTasks = new ArrayList<>();
     private ExecutorService executor;
 
-    public int maxMemory = 512;
+    public int maxMemory;
 
-    int memoryGettingUsed = 0;
+    private final int numThreads;
+
+    private int memoryGettingUsed = 0;
     int memoryUsedTotal = 0;
 
     public InvokerThreads(int numThreads, int maxMemory) {
+        this.numThreads = numThreads;
         executor = Executors.newFixedThreadPool(numThreads);
         this.maxMemory = maxMemory;
     }
@@ -34,9 +36,24 @@ public class InvokerThreads implements Invoker {
         return memoryGettingUsed;
     }
 
+    public int getMaxMemory() {
+        return maxMemory;
+    }
+
+    public int getNumThreads() {
+        return numThreads;
+    }
+
+
     public void setMemoryGettingUsed(int memoryGettingUsed) {
         lock.lock();
         this.memoryGettingUsed -= memoryGettingUsed;
+        lock.unlock();
+    }
+
+    public void setMemoryGettingUsedToZero() {
+        lock.lock();
+        this.memoryGettingUsed = 0;
         lock.unlock();
     }
 
@@ -62,18 +79,8 @@ public class InvokerThreads implements Invoker {
         return returns;
     }
 
-    public Future<String> submitTask(Callable<String> callableTask) {
-        callableTasks.add(callableTask);
-        return executor.submit(callableTask);
-    }
-
-    public void executeAllCallableTask() throws InterruptedException {
-        executor.invokeAll(callableTasks);
-    }
-
-
+    @Override
     public WrappedReturn executeAsync(Function<Map<String, ?>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
-        long start = System.nanoTime();
 
         memoryUsedTotal += memoryUsage;
         observer.putMemoryPairInvoker(this, memoryUsage);
@@ -84,10 +91,6 @@ public class InvokerThreads implements Invoker {
 
             Callable<Object> callable = () -> {
                 Object returns = action.apply(values);
-                long end = System.nanoTime();
-                long totalTime = end - start;
-
-                observer.putActionTimePair(action + "", totalTime);
                 observer.putMemoryPair(action + "", memoryUsage);
 
                 return returns;
