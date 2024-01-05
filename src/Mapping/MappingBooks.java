@@ -24,15 +24,15 @@ public class MappingBooks {
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 
         long startTime = System.currentTimeMillis();
-        System.out.println("UniformGroup, 4 invokers, 10Threads, 1024MB per invoker");
-        PolicyManager policyManager = new GreedyGroup();
+        System.out.println("RoundRobin, 4 invokers, 10Threads, 1024MB per invoker");
+        PolicyManager policyManager = new RoundRobin();
         Controller controller = new Controller(4, 10, policyManager, 4, 1024);
         Map<String, Integer> wordCountMap = new ConcurrentHashMap<>();
         // Create a Foo instance using ActionProxy
         ReadBook readBook = (ReadBook) ActionProxy.newInstance(new ReadBooks(),
                 controller);
-        for (int j = 1; j < 11; j++) {
-            System.out.println(j);
+        int wordCount = 0;
+        for (int j = 1; j < 2; j++) {
             Object results = null;
 
             // Create a Controller instance
@@ -56,7 +56,7 @@ public class MappingBooks {
                                 MapAndWord mapAndWord = new MapAndWord(currentWord, wordCountMap);
 
                                 readBook.putMap(mapAndWord);
-
+                                wordCount++;
                             }
 
                             currentList.clear();
@@ -69,7 +69,7 @@ public class MappingBooks {
                     for (String currentWord : currentList) {
                         MapAndWord mapAndWord = new MapAndWord(currentWord, wordCountMap);
                         results = readBook.putMap(mapAndWord);
-
+                        wordCount++;
                     }
                 }
             }
@@ -112,6 +112,8 @@ public class MappingBooks {
         long endTime = System.currentTimeMillis();
         Thread.sleep(4000);
         System.out.println("Time needed to read 10 books:" + ((endTime - startTime) / 1000) + "s");
+        System.out.println("Word count:"+wordCount);
         System.exit(0);
+
     }
 }
