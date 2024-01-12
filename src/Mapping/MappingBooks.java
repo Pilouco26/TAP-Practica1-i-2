@@ -32,7 +32,7 @@ public class MappingBooks {
         ReadBook readBook = (ReadBook) ActionProxy.newInstance(new ReadBooks(),
                 controller);
         int wordCount = 0;
-        for (int j = 1; j < 2; j++) {
+        for (int j = 1; j < 10; j++) {
             Object results = null;
 
             // Create a Controller instance

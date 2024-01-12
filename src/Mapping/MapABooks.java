@@ -61,7 +61,7 @@ public class MapABooks implements MapABook {
             }
         }
         // Assuming readBook is an instance of your ReadBook class
-        readBook.printMapCount(wordCountMap);
+
 
 
         return wordCount;
