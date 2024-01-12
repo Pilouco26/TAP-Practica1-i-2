@@ -1,4 +1,4 @@
-package Mapping
+/*package Mapping
 
 import ActionProxy.ActionProxy
 import Controller.Controller
@@ -15,7 +15,7 @@ import PolicyManager.GreedyGroup
 import WrappedReturn.WrappedReturn
 
 
-object MappingBooks {
+object MappingBooksScala {
 
   def main(args: Array[String]): Unit = {
     val startTime = System.currentTimeMillis()
@@ -75,3 +75,4 @@ object MappingBooks {
     }
   }
 }
+*/

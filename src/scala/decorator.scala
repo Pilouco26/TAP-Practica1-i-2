@@ -1,4 +1,4 @@
-package Decorator
+/*package Decorator
 
 import Invoker.Invoker
 import Invoker.InvokerThreads
@@ -10,7 +10,7 @@ import scala.util.Try
 
 import Invoker.Observer
 
-class DecoratorInvoker extends InvokerThreads {
+class DecoratorInvokerScala extends InvokerThreads {
 
   val invokerThreads: InvokerThreads = null
 
@@ -40,4 +40,4 @@ class DecoratorInvoker extends InvokerThreads {
       wrappedReturn
     }
   }
-}
+}*/
