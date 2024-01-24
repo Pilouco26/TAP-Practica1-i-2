@@ -4,7 +4,7 @@ import Controller.Controller
 import Mapping.{MapABook, MapABooks, MapAndNumber, ReadBook, ReadBooks2}
 import PolicyManager.{PolicyManager, RoundRobin}
 import WrappedReturn.WrappedReturn
-
+import PolicyManagerScala.RoundRobinScala
 import java.util.concurrent.{ConcurrentHashMap, CopyOnWriteArrayList}
 import scala.collection.JavaConverters._
 
@@ -13,7 +13,7 @@ object MappingBooksConcurrentScala extends App {
   val startTime = System.currentTimeMillis()
   val books = 10
   println("RoundRobin, 4 invokers, 10Threads, 1024MB per invoker")
-  val policyManager: PolicyManager = new RoundRobin()
+  val policyManager: PolicyManager = new RoundRobinScala()
   val controller = new Controller(4, 10, policyManager, 4, 1024)
   val wordCountMap = new ConcurrentHashMap[String, Integer]()
   val readBook: ReadBook = new ReadBooks2()
