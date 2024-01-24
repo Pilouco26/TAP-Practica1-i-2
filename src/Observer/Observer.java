@@ -1,4 +1,6 @@
-package Invoker;
+package Observer;
+
+import Invoker.Invoker;
 
 import java.util.HashMap;
 import java.util.Map;

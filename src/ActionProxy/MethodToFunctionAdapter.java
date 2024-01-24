@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class MethodToFunctionAdapter {
 
-    public static Function<Map<String, ?>, Integer> adaptMethod(Method method, Class<?> targetClass) {
+    public static Function<Map<String, Object>, Integer> adaptMethod(Method method, Class<?> targetClass) {
         return (inputMap) -> {
             try {
                 return (Integer) method.invoke(targetClass.newInstance(), inputMap);

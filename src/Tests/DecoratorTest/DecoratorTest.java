@@ -24,7 +24,7 @@ public class DecoratorTest {
     public void test() throws ExecutionException, InterruptedException, NoSuchMethodException {
         PolicyManager policyManager = new GreedyGroup();
         Controller controller = new Controller(4, 2, policyManager, 4, 512);
-        Function<Map<String, ?>, Integer> f = map -> (Integer) map.get("x") + (Integer) map.get("y");
+        Function<Map<String, Object>, Integer> f = map -> (Integer) map.get("x") + (Integer) map.get("y");
         controller.registerAction("addAction", f, 256);
 
 

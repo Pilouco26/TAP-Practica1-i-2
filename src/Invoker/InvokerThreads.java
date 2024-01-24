@@ -1,9 +1,8 @@
 package Invoker;
 
+import Observer.Observer;
 import WrappedReturn.WrappedReturn;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.*;
@@ -80,7 +79,7 @@ public class InvokerThreads implements Invoker {
     }
 
     @Override
-    public WrappedReturn executeAsync(Function<Map<String, ?>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
+    public WrappedReturn executeAsync(Function<Map<String, Object>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
 
         memoryUsedTotal += memoryUsage;
         observer.putMemoryPairInvoker(this, memoryUsage);

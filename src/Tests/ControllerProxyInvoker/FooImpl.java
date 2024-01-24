@@ -1,4 +1,4 @@
-package Tests.ActionProxy;
+package Tests.ControllerProxyInvoker;
 
 import java.util.Map;
 

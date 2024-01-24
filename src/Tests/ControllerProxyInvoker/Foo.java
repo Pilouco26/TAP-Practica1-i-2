@@ -1,4 +1,4 @@
-package Tests.ActionProxy;
+package Tests.ControllerProxyInvoker;
 
 /**
  * Created by milax on 20/10/15.

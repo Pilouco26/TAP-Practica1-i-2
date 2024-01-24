@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class ReadBooks implements ReadBook{
+public class ReadBooks implements ReadBook {
     @Override
     public Object filterPonctuation(Object args) {
         Map<String, Object> map = (Map<String, Object>) args;
@@ -38,7 +38,7 @@ public class ReadBooks implements ReadBook{
     @Override
     public Object printMapCount(Object args) {
         Map<String, Object> map = (Map<String, Object>) args;
-        Map<String, Integer> wordCountMap = (Map<String, Integer>)map.get("0");
+        Map<String, Integer> wordCountMap = (Map<String, Integer>) map.get("0");
 
         // Create a new TreeMap to sort the word count map by word
         TreeMap<String, Integer> sortedWordCountMap = new TreeMap<>(wordCountMap);

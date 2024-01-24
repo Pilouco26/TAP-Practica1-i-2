@@ -38,7 +38,7 @@ public class ActionProxy implements InvocationHandler {
 
 
         for (int i = 0; i < methods.length; i++) {
-            Function<Map<String, ?>, Integer> adaptedMethod = MethodToFunctionAdapter.adaptMethod(methods[i], targetClass);
+            Function<Map<String, Object>, Integer> adaptedMethod = MethodToFunctionAdapter.adaptMethod(methods[i], targetClass);
             controller.registerAction(methods[i].getName(), adaptedMethod, 716);
         }
         return Proxy.newProxyInstance(targetClass.getClassLoader(),

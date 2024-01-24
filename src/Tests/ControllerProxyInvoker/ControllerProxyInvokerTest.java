@@ -1,4 +1,4 @@
-package Tests.ActionProxy;
+package Tests.ControllerProxyInvoker;
 
 import ActionProxy.ActionProxy;
 import ActionProxy.FooImpl;
@@ -7,12 +7,10 @@ import Controller.Controller;
 import PolicyManager.PolicyManager;
 import PolicyManager.RoundRobin;
 import org.junit.Test;
-import Decorator.DecoratorFooImpl;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class ActionProxyTest {
+public class ControllerProxyInvokerTest {
 
     @Test
     public void testMain() {

@@ -1,6 +1,5 @@
 package Decorator;
 
-import Invoker.Invoker;
 import Invoker.InvokerThreads;
 import WrappedReturn.WrappedReturn;
 
@@ -9,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-import Invoker.Observer;
+import Observer.Observer;
 
 
 public class DecoratorInvoker extends InvokerThreads {
@@ -26,7 +25,7 @@ public class DecoratorInvoker extends InvokerThreads {
     }
 
     @Override
-    public WrappedReturn executeAsync(Function<Map<String, ?>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
+    public WrappedReturn executeAsync(Function<Map<String, Object>, Integer> action, Map<String, Object> values, int memoryUsage, Observer observer) throws InterruptedException, ExecutionException {
         long start = System.currentTimeMillis();
         String cacheString = observer.getInvokerName();
         StringBuilder concatString = new StringBuilder();
@@ -41,7 +40,7 @@ public class DecoratorInvoker extends InvokerThreads {
             WrappedReturn wrappedReturn = super.executeAsync(action, values, memoryUsage, observer);
             cache.put(cacheString, wrappedReturn);
             long end = System.currentTimeMillis();
-            System.out.println(end-start);
+            /*System.out.println(end-start);*/
             return wrappedReturn;
         }
     }

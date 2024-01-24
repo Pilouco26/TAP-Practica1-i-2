@@ -21,7 +21,7 @@ public class MappingBooksConcurrent {
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 
         long startTime = System.currentTimeMillis();
-        int books=1000;
+        int books=10;
         System.out.println("RoundRobin, 4 invokers, 10Threads, 1024MB per invoker");
         PolicyManager policyManager = new RoundRobin();
         Controller controller = new Controller(4, 10, policyManager, 4, 1024);

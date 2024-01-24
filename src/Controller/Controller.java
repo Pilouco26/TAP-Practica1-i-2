@@ -2,15 +2,13 @@ package Controller;
 
 import Decorator.DecoratorInvoker;
 import Invoker.InvokerThreads;
-import Invoker.Invoker;
-import Invoker.Observer;
+import Observer.Observer;
 import PolicyManager.PolicyManager;
 import WrappedReturn.WrappedReturn;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class Controller {
@@ -34,13 +32,13 @@ public class Controller {
 
     }
 
-    public void registerAction(String invokerName, Function<Map<String, ?>, Integer> action, int memoryUsage) {
+    public void registerAction(String invokerName, Function<Map<String, Object>, Integer> action, int memoryUsage) {
         ActionRegistered actionRegistered = new ActionRegistered(action, memoryUsage);
         actionsRegistered.put(invokerName, actionRegistered);
     }
 
     public Object invokeAsync(String invokerName, Object values, CopyOnWriteArrayList<WrappedReturn> listWrapped) throws InterruptedException, ExecutionException, NoSuchMethodException {
-        Function<Map<String, ?>, Integer> action = actionsRegistered.get(invokerName).getAction();
+        Function<Map<String, Object>, Integer> action = actionsRegistered.get(invokerName).getAction();
         Observer observer = observers.get(invokerName);
         if (observer == null) {
             observer = new Observer(invokerName);
@@ -56,7 +54,7 @@ public class Controller {
 
     }
 
-    public Object execute(Object values, CopyOnWriteArrayList<WrappedReturn> listWrapped, Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException, NoSuchMethodException {
+    public Object execute(Object values, CopyOnWriteArrayList<WrappedReturn> listWrapped, Function<Map<String, Object>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException, NoSuchMethodException {
         int lastOne;
         if (values instanceof Map) {
             lastOne = policyManager.selectInvoker(groupSize, invokers, listWrapped, memoryUsage);
@@ -70,7 +68,7 @@ public class Controller {
         }
     }
 
-    public CopyOnWriteArrayList<WrappedReturn> actionPack(List<Map<String, Object>> valuesCasted, Function<Map<String, ?>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException, NoSuchMethodException {
+    public CopyOnWriteArrayList<WrappedReturn> actionPack(List<Map<String, Object>> valuesCasted, Function<Map<String, Object>, Integer> action, int memoryUsage, Observer observer) throws ExecutionException, InterruptedException, NoSuchMethodException {
         int lastOne;
         CopyOnWriteArrayList<WrappedReturn> wrappedReturns = new CopyOnWriteArrayList<WrappedReturn>();
         if (valuesCasted != null) {
