@@ -1,4 +1,7 @@
-package Mapping;
+package ReadBook;
+
+import MapABook.MapAndWord;
+import Mapping.ListAndWord;
 
 import java.util.List;
 import java.util.Map;

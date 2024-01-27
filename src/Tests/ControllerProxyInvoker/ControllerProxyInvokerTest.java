@@ -28,7 +28,7 @@ public class ControllerProxyInvokerTest {
         List<Object> results = null;
         List<Object> results2 = null;
         // Execute the loop ten times
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 100; i++) {
             System.out.println("iteracio: " + i);
             results2 = (List<Object>) aFoo.doSomething(5);
         }

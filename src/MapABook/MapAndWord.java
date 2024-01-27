@@ -1,4 +1,4 @@
-package Mapping;
+package MapABook;
 
 import java.util.Map;
 

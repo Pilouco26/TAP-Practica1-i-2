@@ -1,4 +1,4 @@
-package Mapping;
+package ReadBook;
 
 public interface ReadBook {
 

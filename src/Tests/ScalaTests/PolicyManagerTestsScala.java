@@ -1,13 +1,9 @@
 package Tests.ScalaTests;
 
 import Controller.Controller;
-import PolicyManager.BigGroup;
-import PolicyManager.GreedyGroup;
 import PolicyManager.PolicyManager;
-import PolicyManager.UniformGroup;
 import PolicyManagerScala.GreedyGroupScala;
 import PolicyManagerScala.BigGroupScala;
-import PolicyManagerScala.RoundRobinScala;
 import PolicyManagerScala.UniformGroupScala;
 import WrappedReturn.WrappedReturn;
 import org.junit.Test;

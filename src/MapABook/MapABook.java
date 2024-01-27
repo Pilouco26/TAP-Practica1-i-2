@@ -1,4 +1,4 @@
-package Mapping;
+package MapABook;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

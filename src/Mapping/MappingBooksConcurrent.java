@@ -2,18 +2,17 @@ package Mapping;
 
 import ActionProxy.ActionProxy;
 import Controller.Controller;
+import MapABook.*;
 import PolicyManager.PolicyManager;
 import PolicyManager.RoundRobin;
+import ReadBook.ReadBook;
+import ReadBook.ReadBooks2;
 import WrappedReturn.WrappedReturn;
-import scala.math.Numeric;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import Mapping.ReadBook;
 
 
 public class MappingBooksConcurrent {

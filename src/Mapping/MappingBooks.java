@@ -2,20 +2,18 @@ package Mapping;
 
 import ActionProxy.ActionProxy;
 import Controller.Controller;
+import MapABook.MapAndWord;
 import PolicyManager.PolicyManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Clock;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import PolicyManager.RoundRobin;
-import PolicyManager.UniformGroup;
-import PolicyManager.GreedyGroup;
+import ReadBook.ReadBook;
+import ReadBook.ReadBooks;
 import WrappedReturn.WrappedReturn;
 
 

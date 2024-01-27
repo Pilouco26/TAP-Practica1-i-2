@@ -1,11 +1,14 @@
-package Mapping;
+package ReadBook;
+
+import MapABook.MapAndWord;
+import Mapping.ListAndWord;
 
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 
-public class ReadBooks2 implements ReadBook{
+public class ReadBooks2 implements ReadBook {
     @Override
     public Object filterPonctuation(Object args) {
         ListAndWord listAndWord = (ListAndWord) args;
@@ -37,11 +40,8 @@ public class ReadBooks2 implements ReadBook{
     @Override
     public Object printMapCount(Object args) {
         Map<String, Integer> map = (Map<String, Integer>) args;
-
-
         // Create a new TreeMap to sort the word count map by word
         TreeMap<String, Integer> sortedWordCountMap = new TreeMap<>(map);
-
         // Print the sorted word count map
         for (Map.Entry<String, Integer> entry : sortedWordCountMap.entrySet()) {
             System.out.println(entry.getKey() + " " + entry.getValue());
