@@ -3,18 +3,21 @@ package MappingScala.ReadBookScala
 import MapABook.MapAndWord
 import Mapping.ListAndWord
 import MappingScala.ListAndWordS.ListAndWordS
+import MappingScala.MapABook.MapAndWordS
 
 import java.util
+import java.util.Map
+import scala.collection.JavaConversions.mapAsJavaMap
 
 class ReadBooksScala extends ReadBookScala {
 
 
   def putMap(args: AnyRef): Int = {
-    val mapAndWord = args.asInstanceOf[MapAndWord]
-    val wordCountMap = mapAndWord.getMap
+    val mapAndWord = args.asInstanceOf[MapAndWordS]
+    val wordCountMap: util.Map[String, Integer] = mapAndWord.getMap
     val currentWord = mapAndWord.getWord
     if (!wordCountMap.containsKey(currentWord)) wordCountMap.put(currentWord, 1)
-    else wordCountMap.put(currentWord, wordCountMap.get(currentWord) + 1)
+    else wordCountMap.put(currentWord, wordCountMap.get(currentWord).asInstanceOf[Int]+1)
     0
   }
 

@@ -1,17 +1,20 @@
 package MappingScala.MapABook
 
+import java.util
+import java.util.Map
+
 class MapAndWordS {
   private var word: String = _
 
-  private var wordCountMap: Map[String, Int] = _
+  private var wordCountMap: util.Map[String, Integer] = _
 
-  def this(word: String, wordCountMap: Map[String, Int]) {
+  def this(word: String, wordCountMap: util.Map[String, Integer]) {
     this()
     this.word = word
     this.wordCountMap = wordCountMap
   }
 
-  def getMap: Map[String, Int] = {
+  def getMap: util.Map[String, Integer] = {
     return wordCountMap
   }
 

@@ -2,8 +2,6 @@ package MappingScala.MapABook
 
 
 import MappingScala.ListAndWordS.ListAndWordS
-import ReadBook.ReadBooks2
-import MappingScala.MapABook.MapAndWordS
 import MappingScala.ReadBookScala.ReadBooksScala
 
 import java.io.{BufferedReader, FileReader}
@@ -23,10 +21,12 @@ class MapABookSS extends MapABookS {
     // Create a Controller instance
     try {
       val reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\Mapping\\Books\\book" + j + ".txt"))
-      try {
-        var line: String = null
-        val currentList = new CopyOnWriteArrayList[String]
-        while ((line = reader.readLine) != null) {
+
+      var line: String = null
+      val currentList = new CopyOnWriteArrayList[String]
+      line = reader.readLine
+      while (line != null) {
+        if (line != null) {
           val words = line.split(" ")
           for (word <- words) {
             val listAndWord = new ListAndWordS(word, currentList)
@@ -43,17 +43,19 @@ class MapABookSS extends MapABookS {
             }
           }
         }
-        // Map the remaining words in the current list to the number of times they appear in the book
-        if (!currentList.isEmpty) {
-          import scala.collection.JavaConversions._
-          for (currentWord <- currentList) {
-            val mapAndWord = new MapAndWordS(currentWord, wordCountMap)
-            results = readBook.putMap(mapAndWord).asInstanceOf[Int]
-            assert(results == 0)
-            wordCount += 1
-          }
+        line = reader.readLine
+      }
+      // Map the remaining words in the current list to the number of times they appear in the book
+      if (!currentList.isEmpty) {
+        import scala.collection.JavaConversions._
+        for (currentWord <- currentList) {
+          val mapAndWord = new MapAndWordS(currentWord, wordCountMap)
+          results = readBook.putMap(mapAndWord).asInstanceOf[Int]
+          assert(results == 0)
+          wordCount += 1
         }
-      } finally if (reader != null) reader.close()
+      }
+
     }
     // Assuming readBook is an instance of your ReadBook class
     wordCount

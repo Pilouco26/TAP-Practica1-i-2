@@ -6,12 +6,16 @@ import MappingScala.MapABook.{MapABookS, MapABookSS, MapAndNumberS}
 import MappingScala.ReadBookScala.{ReadBookScala, ReadBooksScala}
 import PolicyManager.PolicyManager
 import PolicyManagerScala.RoundRobinScala
-import ReadBook.{ReadBook, ReadBooks2}
 import WrappedReturn.WrappedReturn
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeoutException
+import java.util.Iterator
 
-import java.util.concurrent.{ConcurrentHashMap, CopyOnWriteArrayList, Future}
-import scala.collection.JavaConverters._
-import scala.concurrent.Await
+
+import java.util
+
+import java.util.concurrent.{ConcurrentHashMap, CopyOnWriteArrayList}
+
 
 object MappingBooksConcurrentScala extends App {
 
@@ -20,7 +24,7 @@ object MappingBooksConcurrentScala extends App {
   println("RoundRobin, 4 invokers, 10Threads, 1024MB per invoker")
   val policyManager: PolicyManager = new RoundRobinScala()
   val controller = new Controller(4, 10, policyManager, 4, 1024)
-  val wordCountMap: Map[String, Int] = Map[String, Int]()
+  val wordCountMap: util.Map[String, Integer] = new ConcurrentHashMap[String, Integer]
   val readBook: ReadBookScala = new ReadBooksScala()
 
   // Create a MapABook instance using ActionProxy
@@ -30,19 +34,35 @@ object MappingBooksConcurrentScala extends App {
   var list: CopyOnWriteArrayList[WrappedReturn] = new CopyOnWriteArrayList[WrappedReturn]()
 
   for (j <- 1 until books) {
-    val a:Int = j % 10
+    val a: Int = j % 10
     val mapAndNumber = new MapAndNumberS(a, wordCountMap)
     val wrappeds: Any = mapABook.mapBook(mapAndNumber)
-    print("break")
     list = wrappeds.asInstanceOf[CopyOnWriteArrayList[WrappedReturn]]
 
   }
 
-  val futures: List[Future[Object]] = list.toArray.map(_.asInstanceOf[WrappedReturn]).map(_.future).toList
+  private var resultList: List[Int] = List()
+  while (list.size() != resultList.size) {
+    val iterator: Iterator[WrappedReturn] = list.iterator()
+
+    while (iterator.hasNext) {
+      val wrappedReturn = iterator.next()
+      try {
+        if (wrappedReturn.future.isDone) {
+          val result = wrappedReturn.future.get().asInstanceOf[Int]
+          wordCount += result
+          resultList = resultList :+ result
+        }
+      } catch {
+        case e: InterruptedException => e.printStackTrace()
+        case e: ExecutionException => e.printStackTrace()
+        case e: TimeoutException => e.printStackTrace()
+      }
+    }
+  }
 
 
-
-  //readBook.printMapCount(wordCountMap)
+  readBook.printMapCount(wordCountMap)
 
   val endTime = System.currentTimeMillis()
   println(s"Time needed to read $books books: ${(endTime - startTime) / 1000}s")
