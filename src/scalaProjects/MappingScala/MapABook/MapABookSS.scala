@@ -21,7 +21,7 @@ class MapABookSS extends MapABookS {
     val lock = new Object
     // Create a javaProject.Controller instance
     try {
-      val reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\javaProject.Mapping\\Books\\book" + j + ".txt"))
+      val reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\javaProject\\Mapping\\Books\\book" + j + ".txt"))
 
       var line: String = null
       val currentList = new CopyOnWriteArrayList[String]

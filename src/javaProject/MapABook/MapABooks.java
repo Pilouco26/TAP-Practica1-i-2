@@ -27,7 +27,7 @@ public class MapABooks implements MapABook {
         // Create a javaProject.Controller instance
 
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\javaProject.Mapping\\Books\\book" + j + ".txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\javaProject\\Mapping\\Books\\book" + j + ".txt"))) {
             String line;
             List<String> currentList = new CopyOnWriteArrayList<>();
 
