@@ -1,22 +1,17 @@
 package Tests.DecoratorTest;
 
-import PolicyManager.PolicyManager;
-import WrappedReturn.WrappedReturn;
+import javaProject.PolicyManager.PolicyManager;
+import javaProject.WrappedReturn.WrappedReturn;
 import org.junit.Test;
 
-import Controller.Controller;
+import javaProject.Controller.Controller;
 
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import PolicyManager.GreedyGroup;
-import PolicyManager.UniformGroup;
-import PolicyManager.BigGroup;
+import javaProject.PolicyManager.GreedyGroup;
 
 public class DecoratorTest {
 

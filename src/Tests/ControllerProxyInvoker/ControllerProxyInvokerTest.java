@@ -1,11 +1,11 @@
 package Tests.ControllerProxyInvoker;
 
-import ActionProxy.ActionProxy;
-import ActionProxy.FooImpl;
-import ActionProxy.Foo;
-import Controller.Controller;
-import PolicyManager.PolicyManager;
-import PolicyManager.RoundRobin;
+import javaProject.ActionProxy.ActionProxy;
+import javaProject.ActionProxy.FooImpl;
+import javaProject.ActionProxy.Foo;
+import javaProject.Controller.Controller;
+import javaProject.PolicyManager.PolicyManager;
+import javaProject.PolicyManager.RoundRobin;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,13 +14,13 @@ public class ControllerProxyInvokerTest {
 
     @Test
     public void testMain() {
-        // Create a PolicyManager instance
+        // Create a javaProject.PolicyManager instance
         PolicyManager policyManager = new RoundRobin();
 
-        // Create a Controller instance
+        // Create a javaProject.Controller instance
         Controller controller = new Controller(4, 10, policyManager, 4, 1024);
 
-        // Create a Foo instance using ActionProxy
+        // Create a Foo instance using javaProject.ActionProxy
         Foo aFoo = (Foo) ActionProxy.newInstance(new FooImpl(), controller);
 
         // Record the start time12

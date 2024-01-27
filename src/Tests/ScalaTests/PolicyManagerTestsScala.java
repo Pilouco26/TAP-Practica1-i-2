@@ -1,11 +1,11 @@
 package Tests.ScalaTests;
 
-import Controller.Controller;
-import PolicyManager.PolicyManager;
-import PolicyManagerScala.GreedyGroupScala;
-import PolicyManagerScala.BigGroupScala;
-import PolicyManagerScala.UniformGroupScala;
-import WrappedReturn.WrappedReturn;
+import javaProject.Controller.Controller;
+import javaProject.PolicyManager.PolicyManager;
+import scalaProjects.PolicyManagerScala.GreedyGroupScala;
+import scalaProjects.PolicyManagerScala.BigGroupScala;
+import scalaProjects.PolicyManagerScala.UniformGroupScala;
+import javaProject.WrappedReturn.WrappedReturn;
 import org.junit.Test;
 
 import java.util.Arrays;

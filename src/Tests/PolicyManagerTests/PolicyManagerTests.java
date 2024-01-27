@@ -1,10 +1,10 @@
 package Tests.PolicyManagerTests;
 
-import PolicyManager.PolicyManager;
-import WrappedReturn.WrappedReturn;
+import javaProject.PolicyManager.PolicyManager;
+import javaProject.WrappedReturn.WrappedReturn;
 import org.junit.Test;
 
-import Controller.Controller;
+import javaProject.Controller.Controller;
 
 
 import java.util.*;
@@ -14,9 +14,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import PolicyManager.GreedyGroup;
-import PolicyManager.UniformGroup;
-import PolicyManager.BigGroup;
+import javaProject.PolicyManager.GreedyGroup;
+import javaProject.PolicyManager.UniformGroup;
+import javaProject.PolicyManager.BigGroup;
 
 public class PolicyManagerTests {
 
