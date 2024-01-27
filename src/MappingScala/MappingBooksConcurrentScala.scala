@@ -4,16 +4,16 @@ import ActionProxy.ActionProxy
 import Controller.Controller
 import MappingScala.MapABook.{MapABookS, MapABookSS, MapAndNumberS}
 import MappingScala.ReadBookScala.{ReadBookScala, ReadBooksScala}
-import PolicyManager.PolicyManager
-import PolicyManagerScala.RoundRobinScala
+
+
+import PolicyManagerScala.{BigGroupScala, GreedyGroupScala, RoundRobinScala, UniformGroupScala}
 import WrappedReturn.WrappedReturn
+import PolicyManager.RoundRobin
+import PolicyManager.PolicyManager
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
 import java.util.Iterator
-
-
 import java.util
-
 import java.util.concurrent.{ConcurrentHashMap, CopyOnWriteArrayList}
 
 
@@ -42,9 +42,9 @@ object MappingBooksConcurrentScala extends App {
   }
 
   private var resultList: List[Int] = List()
-  while (list.size() != resultList.size) {
+  while (list.size() !=0) {
     val iterator: Iterator[WrappedReturn] = list.iterator()
-
+    val newlist: CopyOnWriteArrayList[WrappedReturn] = new CopyOnWriteArrayList[WrappedReturn]()
     while (iterator.hasNext) {
       val wrappedReturn = iterator.next()
       try {
@@ -53,12 +53,16 @@ object MappingBooksConcurrentScala extends App {
           wordCount += result
           resultList = resultList :+ result
         }
+        else {
+          newlist.add(wrappedReturn )
+        }
       } catch {
         case e: InterruptedException => e.printStackTrace()
         case e: ExecutionException => e.printStackTrace()
         case e: TimeoutException => e.printStackTrace()
       }
     }
+    list = newlist
   }
 
 

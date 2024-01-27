@@ -18,6 +18,7 @@ class MapABookSS extends MapABookS {
     val j = mapAndNumber.getIndex
     val readBook = new ReadBooksScala
     var results = -1
+    val lock = new Object
     // Create a Controller instance
     try {
       val reader = new BufferedReader(new FileReader("C:\\Users\\mlope\\IdeaProjects\\cloudPracticac\\src\\Mapping\\Books\\book" + j + ".txt"))
@@ -37,7 +38,9 @@ class MapABookSS extends MapABookS {
               for (currentWord <- currentList) {
                 val mapAndWord = new MapAndWordS(currentWord, wordCountMap)
                 readBook.putMap(mapAndWord)
-                wordCount += 1
+                lock.synchronized {
+                  wordCount += 1
+                }
               }
               currentList.clear()
             }
@@ -52,7 +55,9 @@ class MapABookSS extends MapABookS {
           val mapAndWord = new MapAndWordS(currentWord, wordCountMap)
           results = readBook.putMap(mapAndWord).asInstanceOf[Int]
           assert(results == 0)
-          wordCount += 1
+          lock.synchronized {
+            wordCount += 1
+          }
         }
       }
 

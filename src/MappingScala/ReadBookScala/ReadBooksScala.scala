@@ -8,18 +8,21 @@ import MappingScala.MapABook.MapAndWordS
 import java.util
 import java.util.Map
 import scala.collection.JavaConversions.mapAsJavaMap
-
+import java.util.concurrent._
 class ReadBooksScala extends ReadBookScala {
 
 
   def putMap(args: AnyRef): Int = {
     val mapAndWord = args.asInstanceOf[MapAndWordS]
-    val wordCountMap: util.Map[String, Integer] = mapAndWord.getMap
+    val wordCountMap: util.concurrent.ConcurrentHashMap[String, Integer] = mapAndWord.getMap.asInstanceOf[util.concurrent.ConcurrentHashMap[String, Integer]]
     val currentWord = mapAndWord.getWord
-    if (!wordCountMap.containsKey(currentWord)) wordCountMap.put(currentWord, 1)
-    else wordCountMap.put(currentWord, wordCountMap.get(currentWord).asInstanceOf[Int]+1)
+    wordCountMap.synchronized {
+      if (!wordCountMap.containsKey(currentWord)) wordCountMap.put(currentWord, 1)
+      else wordCountMap.put(currentWord, wordCountMap.get(currentWord).asInstanceOf[Int] + 1)
+    }
     0
   }
+
 
   def printMapCount(args: AnyRef): Int = {
     val map = args.asInstanceOf[util.Map[String, Integer]]
@@ -39,7 +42,10 @@ class ReadBooksScala extends ReadBookScala {
     val word = listAndWord.getWord
     val lowercaseWord = word.toLowerCase
     val filteredWord = lowercaseWord.replaceAll("[,.\\-_!?;:”)—“'(‘™’\"0123456789£•|]", "")
-    currentList.add(filteredWord)
+    currentList.synchronized {
+      currentList.add(filteredWord)
+    }
     0
   }
+
 }
